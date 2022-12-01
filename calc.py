@@ -58,9 +58,17 @@ def making_numbers():
     
     def press_delete(b, n):
         press(n)
+   
+       
+        def switch():
+            if b["state"] == "normal":
+                b["state"] = "disabled"
+        
+            else:
+                b["state"] = "normal"
+
+        switch()
         b.grid_forget()
-        #b.destroy()
-    
    # def retrieve(b):
     #    for i in range():
      #       buttoni
@@ -172,9 +180,7 @@ if __name__ == "__main__":
     "1",
     "2",
     "3",
-    "4",
-    "5",
-    "6"]
+    "4",]
     
     clicked = IntVar()
 
@@ -218,13 +224,10 @@ if __name__ == "__main__":
         command=clear, height=1, width=7)
     clear.grid(row=5, column='1')
 
-    Decimal= Button(gui, text='.', fg='black', bg='red',
-            command=lambda: press('.'), height=1, width=7)
-    Decimal.grid(row=6, column=0)
-    
     Lbracket = Button(gui, text='(', fg='black', bg='red',
             command=lambda: press('('), height=1, width=7)
     Lbracket.grid(row=6,column=1)
+    
     Rbracket = Button(gui, text=')', fg='black', bg='red',
             command=lambda: press(')'), height=1, width=7)
     Rbracket.grid(row=6,column=2)
