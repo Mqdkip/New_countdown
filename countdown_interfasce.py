@@ -1,19 +1,28 @@
+import tkinter
+from datetime import datetime
 from tkinter import *  # import everything from tkinter module
+from tkinter import messagebox
+
+import customtkinter as ctk
 import functools  # import functools for button commands
 import random
 from random import randint  # import random and randint for sampling and number choice.
+import time
+import datetime
 
 
+# ctk.set_default_color_theme("dark-red")
 # Making the big number and developing all possible solutions
 def making():
     big_options = [25, 50, 75, 100]
     small_options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     number_of_big = int(input("How many big numbers: "))
-    #number_of_big = clicked.get()
+    # number_of_big = clicked.get()
     lob = random.sample(big_options, number_of_big)  # big numbers used in number list
     los = random.sample(small_options, (6 - number_of_big))  # small numbers used in number list
     global numbers
     numbers = [*los, *lob]
+    global target
     target = randint(100, 999)
     print(f"The aim is to make {target} using {numbers}")
     solutions = list()
@@ -27,31 +36,30 @@ def making():
             final.append(s)
     for s in final:  # print them out
         pass
-        #print(s)
+        # print(s)
     print(f"There are a total of {len(final)} solutions.")
-    #button_making(numbers)
-
+    # button_making(numbers)
 
 
 def switch():
     if buttonc["state"] == "normal":
-        buttonc["state"] = "disabled"
-        button0["state"] = "disabled"
-        button1["state"] = "disabled"
-        button2["state"] = "disabled"
-        button3["state"] = "disabled"
-        button4["state"] = "disabled"
-        button5["state"] = "disabled"
-
+        buttonc.configure(state="disabled")
+        button0.configure(state="disabled")
+        button1.configure(state="disabled")
+        button2.configure(state="disabled")
+        button3.configure(state="disabled")
+        button4.configure(state="disabled")
+        button5.configure(state="disabled")
 
     else:
-        buttonc["state"] = "normal"
-        button0["state"] = "normal"
-        button1["state"] = "normal"
-        button2["state"] = "normal"
-        button3["state"] = "normal"
-        button4["state"] = "normal"
-        button5["state"] = "normal"
+        buttonc.configure(state="normal")
+        button0.configure(state="normal")
+        button1.configure(state="normal")
+        button2.configure(state="normal")
+        button3.configure(state="normal")
+        button4.configure(state="normal")
+        button5.configure(state="normal")
+
 
 def number_press_delete(b, n):
     press(n)
@@ -90,8 +98,6 @@ def combine(target, solutions, path, rem2, n1, n2, symb):
         solve(target, lst, newpath, solutions)
 
 
-
-
 # Button initialisation
 
 # On click of a button, the result enters the expression bar
@@ -124,14 +130,14 @@ def clear():
     expression = ""
     equation.set("")
 
+
 # create a Buttons and place at a particular location inside the root window .
 # when user press the button, the command or function affiliated to that button is executed .
 
-#def show():
- #   label.config(text=clicked.get())
-  #  dropdownsend.destroy()
-    # print(clicked.get())
-
+# def show():
+#   label.config(text=clicked.get())
+#  dropdownsend.destroy()
+# print(clicked.get())
 
 
 def operand_press_switch(op):
@@ -139,94 +145,107 @@ def operand_press_switch(op):
     switch()
 
 
-
-#def button_making(numbers):
+# def button_making(numbers):
 if __name__ == "__main__":
-    gui = Tk()  # create a GUI window
+    gui = ctk.CTk()  # create a GUI window
     gui.configure(background="white")  # set the background colour of GUI window
     gui.title("Countdown")  # set the title of GUI window
-    #gui.geometry("700x500")  # set the configuration of GUI window
+    # gui.geometry("700x500")  # set the configuration of GUI window
     equation = StringVar()  # StringVar() is the variable class we create an instance of this class
     expression_field = Entry(gui, textvariable=equation)  # create the text entry box for showing the expression.
-    expression_field.grid(columnspan=4,ipadx=100)  # grid method is used for placing the widgets at respective positions in table like structure.
+    expression_field.grid(columnspan=4,
+                          ipadx=100)  # grid method is used for placing the widgets at respective positions in table like structure.
     making()
 
+brn = 0 #base row number
 
 
+
+
+
+target_label = ctk.CTkButton(gui, text = f"Target is {target}",text_color=("red"))
+target_label.configure(state = "disabled", fg_color='red', text_color_disabled='white')
+target_label.grid(row = brn+1, column = 0)
 
 buttonc = Button(gui, text=f'Constant button')
 
-
-
-
-button0 = Button(gui, text=f' {numbers[0]} ', fg='black', bg='white', padx = 16, pady = 16, bd = 8, font = ('arial', 20, 'bold'))
+button0 = ctk.CTkButton(gui, text=f' {numbers[0]} ', font=('arial', 20, 'bold'))
 button0.configure(command=functools.partial(number_press_delete, button0, numbers[0]))
-button0.grid(row=2, column=0)
+button0.grid(row=brn+3, column=0)
 
-button1 = Button(gui, text=f' {numbers[1]} ', fg='black', bg='white', padx = 16, pady = 16, bd = 8, font = ('arial', 20, 'bold'))
+button1 = ctk.CTkButton(gui, text=f' {numbers[1]} ', font=('arial', 20, 'bold'))
 button1.configure(command=functools.partial(number_press_delete, button1, numbers[1]))
-button1.grid(row=2, column=1)
+button1.grid(row=brn+3, column=1)
 
-button2 = Button(gui, text=f' {numbers[2]} ', fg='black', bg='red', padx = 16, pady = 16, bd = 8, font = ('arial', 20, 'bold'))
+button2 = ctk.CTkButton(gui, text=f' {numbers[2]} ', font=('arial', 20, 'bold'))
 button2.configure(command=functools.partial(number_press_delete, button2, numbers[2]))
-button2.grid(row=2, column=2)
+button2.grid(row=brn+3, column=2)
 
-button3 = Button(gui, text=f' {numbers[3]} ', fg='black', bg='red', padx = 16, pady = 16, bd = 8, font = ('arial', 20, 'bold'))
+button3 = ctk.CTkButton(gui, text=f' {numbers[3]} ', font=('arial', 20, 'bold'))
 button3.configure(command=functools.partial(number_press_delete, button3, numbers[3]))
-button3.grid(row=3, column=0)
+button3.grid(row=brn+4, column=0)
 
-button4 = Button(gui, text=f' {numbers[4]} ', fg='black', bg='red', padx = 16, pady = 16, bd = 8, font = ('arial', 20, 'bold'))
+button4 = ctk.CTkButton(gui, text=f' {numbers[4]} ', font=('arial', 20, 'bold'))
 button4.configure(command=functools.partial(number_press_delete, button4, numbers[4]))
-button4.grid(row=3, column=1)
+button4.grid(row=brn+4, column=1)
 
-button5 = Button(gui, text=f' {numbers[5]} ', fg='black', bg='red', padx = 16, pady = 16, bd = 8, font = ('arial', 20, 'bold'))
+button5 = ctk.CTkButton(gui, text=f' {numbers[5]} ', font=('arial', 20, 'bold'))
 button5.configure(command=functools.partial(number_press_delete, button5, numbers[5]))
-button5.grid(row=3, column=2)
-
+button5.grid(row=brn+4, column=2)
 
 # Create button, it will change label text
-#dropdownsend = Button(gui, text="Click to Confirm", command=show)
-#dropdownsend.grid(row=3, column=4)
+# dropdownsend = Button(gui, text="Click to Confirm", command=show)
+# dropdownsend.grid(row=3, column=4)
 
 # Create Label
-label = Label(gui, text=" ")
+#label = Label(gui, text=" ")
 
 # operation buttons
-plus = Button(gui, text=' + ', fg='black', bg='red', height=1, width=7)
+plus = ctk.CTkButton(gui, text=' + ')
 plus.configure(command=functools.partial(operand_press_switch, ' + '))
-plus.grid(row=2, column=3)
+plus.grid(row=brn+3, column=3)
 
-minus = Button(gui, text=' - ', fg='black', bg='red', height=1, width=7)
-minus.configure(command = functools.partial(operand_press_switch, '-'))
-minus.grid(row=3, column=3)
+minus = ctk.CTkButton(gui, text=' - ')
+minus.configure(command=functools.partial(operand_press_switch, '-'))
+minus.grid(row=brn+4, column=3)
 
-multiply = Button(gui, text=' * ', fg='black', bg='red', height=1, width=7)
-multiply.configure(command = functools.partial(operand_press_switch, '*'))
-multiply.grid(row=4, column=3)
+multiply = ctk.CTkButton(gui, text=' * ')
+multiply.configure(command=functools.partial(operand_press_switch, '*'))
+multiply.grid(row=brn+5, column=3)
 
-divide = Button(gui, text=' / ', fg='black', bg='red', height=1, width=7)
-divide.configure(command = functools.partial(operand_press_switch, '/'))
-divide.grid(row=5, column=3)
+divide = ctk.CTkButton(gui, text=' / ')
+divide.configure(command=functools.partial(operand_press_switch, '/'))
+divide.grid(row=brn+6, column=3)
 
-equal = Button(gui, text=' = ', fg='black', bg='red',
-               command=equalpress, height=1, width=7)
-equal.grid(row=5, column=2)
+equal = ctk.CTkButton(gui, text=' = ', command=equalpress)
+equal.grid(row=brn+6, column=2)
 
-clear = Button(gui, text='Clear', fg='black', bg='red',
-               command=clear, height=1, width=7)
-clear.grid(row=5, column='1')
+clear = ctk.CTkButton(gui, text='Clear', command=clear)
+clear.grid(row=brn+5, column='0')
 
-Lbracket = Button(gui, text='(', fg='black', bg='red',
-                  command=lambda: press('('), height=1, width=7)
-Lbracket.grid(row=6, column=1)
+Lbracket = ctk.CTkButton(gui, text='(', command=lambda: press('('))
+Lbracket.grid(row=brn+5, column=1)
 
-Rbracket = Button(gui, text=')', fg='black', bg='red',
-                  command=lambda: press(')'), height=1, width=7)
-Rbracket.grid(row=6, column=2)
+Rbracket = ctk.CTkButton(gui, text=')', command=lambda: press(')'))
+Rbracket.grid(row=brn+5, column=2)
 
-reset = Button(gui, text='Reset', fg='black', bg='red',
-               command=making, height=1, width=7)
-reset.grid(row=7, column=1)
+reset = ctk.CTkButton(gui, text='Reset', command=making)
+reset.grid(row=brn+6, column=1)
+
+
+
+t_seconds = 30
+while t_seconds > 0:
+    timer = datetime.timedelta(seconds = t_seconds)
+    time.sleep(1)
+    t_seconds -= 1
+    time_b = ctk.CTkButton(gui, text=f"Time left is {timer}")
+    time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
+    time_b.grid(row=brn + 1, column=1)
+    gui.update()
+gui.update()
+if (t_seconds == 0):
+    messagebox.showinfo("Time Countdown", "Time's up ")
 
 
 gui.mainloop()  # start the GUI
