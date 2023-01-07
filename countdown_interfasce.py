@@ -1,3 +1,5 @@
+#todo Undo button
+
 import tkinter
 from datetime import datetime
 from tkinter import *  # import everything from tkinter module
@@ -35,8 +37,8 @@ def making():
             unique.append(a)
             final.append(s)
     for s in final:  # print them out
-        pass
-        # print(s)
+        #pass
+        print(s)
     print(f"There are a total of {len(final)} solutions.")
     # button_making(numbers)
 
@@ -50,6 +52,10 @@ def switch():
         button3.configure(state="disabled")
         button4.configure(state="disabled")
         button5.configure(state="disabled")
+        plus.configure(state="normal")
+        minus.configure(state="normal")
+        multiply.configure(state="normal")
+        divide.configure(state="normal")
 
     else:
         buttonc.configure(state="normal")
@@ -59,12 +65,16 @@ def switch():
         button3.configure(state="normal")
         button4.configure(state="normal")
         button5.configure(state="normal")
+        plus.configure(state = "disabled")
+        minus.configure(state = "disabled")
+        multiply.configure(state = "disabled")
+        divide.configure(state = "disabled")
 
 
 def number_press_delete(b, n):
     press(n)
     switch()
-    b.grid_forget()
+    b.grid_remove()
 
 
 def solve(target, numbers, path, solutions):
@@ -144,6 +154,10 @@ def operand_press_switch(op):
     press(op)
     switch()
 
+def remember():
+    if not button1.winfo_viewable():
+        button1.grid()
+
 
 # def button_making(numbers):
 if __name__ == "__main__":
@@ -158,7 +172,6 @@ if __name__ == "__main__":
     making()
 
 brn = 0 #base row number
-
 
 
 
@@ -223,29 +236,56 @@ equal.grid(row=brn+6, column=2)
 clear = ctk.CTkButton(gui, text='Clear', command=clear)
 clear.grid(row=brn+5, column='0')
 
+
+undo_button = ctk.CTkButton(gui, text = 'Undo', font=('arial', 20, 'bold'))
+undo_button.configure(command=remember())
+undo_button.grid(row=brn+6, column=0)
+
 Lbracket = ctk.CTkButton(gui, text='(', command=lambda: press('('))
 Lbracket.grid(row=brn+5, column=1)
 
 Rbracket = ctk.CTkButton(gui, text=')', command=lambda: press(')'))
 Rbracket.grid(row=brn+5, column=2)
 
-reset = ctk.CTkButton(gui, text='Reset', command=making)
-reset.grid(row=brn+6, column=1)
+#reset = ctk.CTkButton(gui, text='Reset', command=making)
+#reset.grid(row=brn+6, column=1)
 
-
+timer_string_var = ctk.StringVar(gui)
+time_b = ctk.CTkButton(gui, textvariable=timer_string_var)
+time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
+time_b.grid(row=brn + 1, column=1)
 
 t_seconds = 30
-while t_seconds > 0:
-    timer = datetime.timedelta(seconds = t_seconds)
-    time.sleep(1)
+
+
+def update_gui():
+    global t_seconds
+    timer = datetime.timedelta(seconds=t_seconds)
+    timer_string_var.set(timer)
     t_seconds -= 1
-    time_b = ctk.CTkButton(gui, text=f"Time left is {timer}")
-    time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
-    time_b.grid(row=brn + 1, column=1)
+    if (t_seconds == 0):
+        messagebox.showinfo("Time Countdown", "Time's up ")
     gui.update()
-gui.update()
-if (t_seconds == 0):
-    messagebox.showinfo("Time Countdown", "Time's up ")
+    gui.after(1000, update_gui)
+
+gui.after(1000, update_gui)
+
+
+
+
+
+
+# while t_seconds > 0:
+#     timer = datetime.timedelta(seconds = t_seconds)
+#     time.sleep(1)
+#     t_seconds -= 1
+#     time_b = ctk.CTkButton(gui, text=f"Time left is {timer}")
+#     time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
+#     time_b.grid(row=brn + 1, column=1)
+#     gui.update()
+
+
+
 
 
 gui.mainloop()  # start the GUI

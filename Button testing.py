@@ -28,6 +28,12 @@ bc = Button(fenster, text = 'Constant button', height = 6, width = 9)
 bc.grid(row = 1, column = 2)
 b1 = Button(fenster, text="Button", height=5, width=7)
 
+def toggle_message():
+        if message.winfo_viewable():
+            message.grid_remove()
+        else:
+            message.grid()
+
 b1.grid(row=0, column=0)
 b3 = Button(fenster, text="Button", height=5, width=7)
 b1.configure(command = functools.partial(basic_switch))
