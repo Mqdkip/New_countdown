@@ -12,10 +12,10 @@ from random import randint  # import random and randint for sampling and number 
 import time
 import datetime
 
-
-# ctk.set_default_color_theme("dark-red")
 # Making the big number and developing all possible solutions
 def making():
+    global score
+    score = 0
     big_options = [25, 50, 75, 100]
     small_options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     number_of_big = int(input("How many big numbers: "))
@@ -133,6 +133,17 @@ def equalpress():
         equation.set(" error ")
         expression = ""
 
+    difference = abs(target - float(total))
+    if difference == 0:
+        score += 10
+        print(score)
+    elif difference < 10:
+        score += 10 - difference
+        print(score)
+    else:
+        print("Number evaluated is too far from target to score any points")
+
+
 
 # Function to clear the contents of text entry box
 def clear():
@@ -247,7 +258,7 @@ Lbracket.grid(row=brn+5, column=1)
 Rbracket = ctk.CTkButton(gui, text=')', command=lambda: press(')'))
 Rbracket.grid(row=brn+5, column=2)
 
-#reset = ctk.CTkButton(gui, text='Reset', command=making)
+#reset = ctk.CTkButton(gui, text='Reset', command=making_numbers)
 #reset.grid(row=brn+6, column=1)
 
 timer_string_var = ctk.StringVar(gui)
