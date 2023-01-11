@@ -140,6 +140,9 @@ class App(customtkinter.CTk):
         dialog = customtkinter.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
         print("CTkInputDialog:", dialog.get_input())
 
+    def entry_input(self):
+        print("CTkInputDialog:", entry.get())
+
     def change_appearance_mode_event(self, new_appearance_mode: str):
         customtkinter.set_appearance_mode(new_appearance_mode)
 
