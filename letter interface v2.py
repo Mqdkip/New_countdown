@@ -69,78 +69,57 @@ def making_letters():
     # Print the longest words
     print(f"The longest words are: {longest_words}")
 
-expression = ""
-
-
-
-
-def press(num):
-    global expression
-    expression = expression + str(num)  # Concatenation of string
-    equation.set(expression)  # Update the expression by using set method
-
-def letter_press_delete(l, n):
-    press(n)
-    l.grid_remove()
 
 def submitpress():
-        try:  # Try and except statement is used for handling the errors like zero
-            global expression
-            total = str(expression)
-            equation.set(total)
-            print(total)
-            expression = ""  # initialize the expression variable
-        # if error is generate then handle by the except block
-        except:
-            equation.set(" error ")
-            expression = ""
-
+        global score
+        total = entry.get()
+        print(total)
         if total in all_possible:
             score += len(total)
             print(score)
+
+        if buttonc["state"] == "normal":
+                buttonc.configure(state="disabled")
+                submit.configure(state = "disabled")
 
 
 if __name__ == "__main__":
     gui = ctk.CTk()  # create a GUI window
     gui.configure(background="black")  # set the background colour of GUI window
     gui.title("Countdown Letters")  # set the title of GUI window
-    equation = StringVar()  # StringVar() is the variable class we create an instance of this class
-    expression_field = Entry(gui, textvariable=equation)  # create the text entry box for showing the expression.
-    expression_field.grid(columnspan=4,
-                          ipadx=100)  # grid method is used for placing the widgets at respective positions in table like structure.
     making_letters()
 bcn = 0 #Base column number
 
 letter0 = ctk.CTkButton(gui, text=f' {letters[0]} ', font=('arial', 20, 'bold'))
-letter0.configure(command=functools.partial(letter_press_delete, letter0, letters[0]))
+letter0.configure(state = "disabled")
 letter0.grid(row=1, column=bcn)
 
 letter1 = ctk.CTkButton(gui, text=f' {letters[1]} ', font=('arial', 20, 'bold'))
-letter1.configure(command=functools.partial(letter_press_delete, letter1, letters[1]))
+letter1.configure(state = "disabled")
 letter1.grid(row=1, column=bcn+1)
 
 letter2 = ctk.CTkButton(gui, text=f' {letters[2]} ', font=('arial', 20, 'bold'))
-letter2.configure(command=functools.partial(letter_press_delete, letter2, letters[2]))
+letter2.configure(state = "disabled")
 letter2.grid(row=1, column=bcn+2)
 
 letter3 = ctk.CTkButton(gui, text=f' {letters[3]} ', font=('arial', 20, 'bold'))
-letter3.configure(command=functools.partial(letter_press_delete, letter3, letters[3]))
+letter3.configure(state = "disabled")
 letter3.grid(row=1, column=bcn+3)
 
 letter4 = ctk.CTkButton(gui, text=f' {letters[4]} ', font=('arial', 20, 'bold'))
-letter4.configure(command=functools.partial(letter_press_delete, letter4, letters[4]))
+letter4.configure(state = "disabled")
 letter4.grid(row=1, column=bcn+4)
 
 letter5 = ctk.CTkButton(gui, text=f' {letters[5]} ', font=('arial', 20, 'bold'))
-letter5.configure(command=functools.partial(letter_press_delete, letter5, letters[5]))
+letter5.configure(state = "disabled")
 letter5.grid(row=1, column=bcn+5)
 
 letter6 = ctk.CTkButton(gui, text=f' {letters[6]} ', font=('arial', 20, 'bold'))
-letter6.configure(command=functools.partial(letter_press_delete, letter6, letters[6]))
+letter6.configure(state = "disabled")
 letter6.grid(row=1, column=bcn+6)
 
 letter7 = ctk.CTkButton(gui, text=f' {letters[7]} ', font=('arial', 20, 'bold'))
-letter7.configure(command=functools.partial(letter_press_delete, letter7, letters[7]))
+letter7.configure(state = "disabled")
 letter7.grid(row=1, column=bcn+7)
 
 letter8 = ctk.CTkButton(gui, text=f' {letters[8]} ', font=('arial', 20, 'bold'))
@@ -150,9 +129,17 @@ letter8.grid(row=1, column=bcn+8)
 submit = ctk.CTkButton(gui, text=' Submit ', command=submitpress)
 submit.grid(row=0, column=4)
 
-string_input_button = ctk.CTkButton(self, text="Log in", command=open_input_dialog_event)
-       string_input_button.grid(row = 0, column = 2, padx = 20, pady = 20)
+entry = ctk.CTkEntry(gui)
+entry.grid(row = 0, column = 3 )
 
+buttonc = Button(gui, text=f'Constant button')
+
+
+vowels_label = ctk.CTkLabel(gui, text="vowels:", anchor="w")
+vowels_label.grid(row=5, column=0, padx=20, pady=(10, 0))
+vowels_optionmenu = ctk.CTkOptionMenu(gui, values = ['3','4','5'])
+vowels_optionmenu.grid(row = 6, column = 0)
+print(vowels_optionmenu.get())
 
 gui.mainloop()
 
