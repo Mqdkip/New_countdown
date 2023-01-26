@@ -20,106 +20,108 @@ class App(ctk.CTk):
         super().__init__()
 
         # configure window
+        global sidebar
+        def sidebar(self):
+            self.sidebar_button_event = None
+            self.title("Countdown")
+            self.geometry(f"{1100}x{580}")
 
+            # configure grid layout (4x4)
+            self.grid_columnconfigure(1, weight=1)
+            self.grid_columnconfigure((2, 3), weight=0)
+            self.grid_rowconfigure((0, 1, 2), weight=1)
 
-        self.title("Countdown")
-        self.geometry(f"{1100}x{580}")
-
-        # configure grid layout (4x4)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_columnconfigure((2, 3), weight=0)
-        self.grid_rowconfigure((0, 1, 2), weight=1)
-
-        # create sidebar frame with widgets
-        # create sidebar frame with widgets
-        self.sidebar_frame = ctk.CTkFrame(self, width=140, corner_radius=0)
-        self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
-        self.sidebar_frame.grid_rowconfigure(4, weight=1)
-        self.logo_label = ctk.CTkLabel(self.sidebar_frame, text="Countdown", font=ctk.CTkFont(size=20, weight="bold"))
-        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.sidebar_button_1 = ctk.CTkButton(self.sidebar_frame, text = 'Home', command=self.sidebar_button_event)
-        self.sidebar_button_1.grid(row=1, column=0, padx=20, pady=10)
-        self.play_numbers_game = ctk.CTkButton(self.sidebar_frame, text = 'Numbers Game', command=self.run_numbers_game)
-        self.play_numbers_game.grid(row=2, column=0, padx=20, pady=10)
-        self.play_letters_game = ctk.CTkButton(self.sidebar_frame, text = 'Letters Game', command=self.run_letters_game)
-        self.play_letters_game.grid(row=3, column=0, padx=20, pady=10)
-        self.appearance_mode_label = ctk.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
-        self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
-        self.appearance_mode_optionemenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"],
-                                                                       command=self.change_appearance_mode_event)
-        self.appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
-        self.scaling_label = ctk.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
-        self.scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
-        self.scaling_optionemenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["80%", "90%", "100%", "110%", "120%"],
-                                                               command=self.change_scaling_event)
-        self.scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
+            # create sidebar frame with widgets
+            # create sidebar frame with widgets
+            self.sidebar_frame = ctk.CTkFrame(self, width=140, corner_radius=0)
+            self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
+            self.sidebar_frame.grid_rowconfigure(4, weight=1)
+            self.logo_label = ctk.CTkLabel(self.sidebar_frame, text="Countdown", font=ctk.CTkFont(size=20, weight="bold"))
+            self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
+            self.sidebar_button_1 = ctk.CTkButton(self.sidebar_frame, text = 'Home', command=self.sidebar_button_event)
+            self.sidebar_button_1.grid(row=1, column=0, padx=20, pady=10)
+            self.play_numbers_game = ctk.CTkButton(self.sidebar_frame, text = 'Numbers Game', command=self.run_numbers_game)
+            self.play_numbers_game.grid(row=2, column=0, padx=20, pady=10)
+            self.play_letters_game = ctk.CTkButton(self.sidebar_frame, text = 'Letters Game', command=self.run_letters_game)
+            self.play_letters_game.grid(row=3, column=0, padx=20, pady=10)
+            self.appearance_mode_label = ctk.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
+            self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
+            self.appearance_mode_optionemenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"],
+                                                                           command=self.change_appearance_mode_event)
+            self.appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
+            self.scaling_label = ctk.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
+            self.scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
+            self.scaling_optionemenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["80%", "90%", "100%", "110%", "120%"],
+                                                                   command=self.change_scaling_event)
+            self.scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
 
         # create main entry and button
 
+        def tabview(self):
+            # create tabview
+            self.tabview = ctk.CTkTabview(self, width=250)
+            self.tabview.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
+            self.tabview.add("Information about the Game")
+            self.tabview.add("How to Play")
+            self.tabview.add("About the Developer")
+            self.tabview.tab("Information about the Game").grid_columnconfigure(0, weight=1)  # configure grid of individual tabs
+            self.tabview.tab("How to Play").grid_columnconfigure(0, weight=1)
+            self.tabview.tab("About the Developer").grid_columnconfigure(0, weight=1)
 
-        # create tabview
-        self.tabview = ctk.CTkTabview(self, width=250)
-        self.tabview.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
-        self.tabview.add("Information about the Game")
-        self.tabview.add("How to Play")
-        self.tabview.add("About the Developer")
-        self.tabview.tab("Information about the Game").grid_columnconfigure(0, weight=1)  # configure grid of individual tabs
-        self.tabview.tab("How to Play").grid_columnconfigure(0, weight=1)
-        self.tabview.tab("About the Developer").grid_columnconfigure(0, weight=1)
-
-        # create textbox
-        self.textbox_info = ctk.CTkTextbox(self.tabview.tab("Information about the Game"), width=900)
-        self.textbox_info.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.textbox_info.insert('0.0',"""
-        Countdown is a popular television show game which has been aired since 1982. 
-        The game has three sections: Letters, Numbers and Conundrum.
+            # create textbox
+            self.textbox_info = ctk.CTkTextbox(self.tabview.tab("Information about the Game"), width=900)
+            self.textbox_info.grid(row=0, column=0, padx=20, pady=(20, 10))
+            self.textbox_info.insert('0.0',"""
+            Countdown is a popular television show game which has been aired since 1982. 
+            The game has three sections: Letters, Numbers and Conundrum.
+            
+            The letters version provides 9 letters of which the player can choose either 3,4 or 5 vowels
+            and the remaining letters to be consonants.
+            From these 9 characters, the aim is to make the longest word possible within the time frame.
+            
+            The numbers version is similar, the user is prompted to pick the amount of 'big numbers',
+            with a maximum of 4 and the remaining numbers are 'small numbers'.
+            Provided with these numbers, a target number is provided and the user's aim is to reach this
+            target number or as close to as possible within the time frame.
         
-        The letters version provides 9 letters of which the player can choose either 3,4 or 5 vowels
-        and the remaining letters to be consonants.
-        From these 9 characters, the aim is to make the longest word possible within the time frame.
-        
-        The numbers version is similar, the user is prompted to pick the amount of 'big numbers',
-        with a maximum of 4 and the remaining numbers are 'small numbers'.
-        Provided with these numbers, a target number is provided and the user's aim is to reach this
-        target number or as close to as possible within the time frame.
-    
-        Conundrum, is the final version where a 9 letter anagram is provided and the aim is to find
-        the 9 letter word from this. 
-        """)
+            Conundrum, is the final version where a 9 letter anagram is provided and the aim is to find
+            the 9 letter word from this. 
+            """)
 
-        self.textbox_htp = ctk.CTkTextbox(self.tabview.tab("How to Play"), width=250)
-        self.textbox_htp.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.textbox_htp.insert('0.0', 'Hi there')
+            self.textbox_htp = ctk.CTkTextbox(self.tabview.tab("How to Play"), width=250)
+            self.textbox_htp.grid(row=0, column=0, padx=20, pady=(20, 10))
+            self.textbox_htp.insert('0.0', 'Hi there')
 
-        self.textbox_atd = ctk.CTkTextbox(self.tabview.tab("About the Developer"), width=250)
-        self.textbox_atd.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.textbox_atd.insert('0.0', 'Hi there')
+            self.textbox_atd = ctk.CTkTextbox(self.tabview.tab("About the Developer"), width=250)
+            self.textbox_atd.grid(row=0, column=0, padx=20, pady=(20, 10))
+            self.textbox_atd.insert('0.0', 'Hi there')
 
-        self.login = ctk.CTkButton(self, text="Log in", command=self.log_in)
-        self.login.grid(row = 0, column = 2, padx = 20, pady = 20)
+            self.login = ctk.CTkButton(self, text="Log in", command=self.log_in)
+            self.login.grid(row = 0, column = 2, padx = 20, pady = 20)
 
-        #self.close = ctk.CTkButton(self, text = 'Close', command = self.close)
-        self.login.grid(row=2, column=2, padx=20, pady=20)
-        self.appearance_mode_optionemenu.set("Dark")
-        self.scaling_optionemenu.set("100%")
+            #self.close = ctk.CTkButton(self, text = 'Close', command = self.close)
+            self.login.grid(row=2, column=2, padx=20, pady=20)
+            self.appearance_mode_optionemenu.set("Dark")
+            self.scaling_optionemenu.set("100%")
 
-
+        sidebar(self)
+        tabview(self)
     def log_in(self):
-        Password = ctk.CTkInputDialog(text="Password:", title="Log in")
-        Username = ctk.CTkInputDialog(text="Username:", title="Log in")
-        print(Username.get_input(), Password.get_input())
+            Password = ctk.CTkInputDialog(text="Password:", title="Log in")
+            Username = ctk.CTkInputDialog(text="Username:", title="Log in")
+            print(Username.get_input(), Password.get_input())
 
-        global file
-        file = open('accounts.csv', 'r')
-        for line in file:
-            item = line.split(',')
-            if Username == item[0] and Password == item[1]:
-                print('Logged in successfully!')
-            else:
-                file = open('accounts.csv', 'a')
-                info = '\n' + Username + ',' + Password
-                file.write(info)
-                print('You have been signed up as a log in could not be found')
+            global file
+            file = open('accounts.csv', 'r')
+            for line in file:
+                item = line.split(',')
+                if Username == item[0] and Password == item[1]:
+                    print('Logged in successfully!')
+                else:
+                    file = open('accounts.csv', 'a')
+                    info = '\n' + Username + ',' + Password
+                    file.write(info)
+                    print('You have been signed up as a log in could not be found')
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
         ctk.set_appearance_mode(new_appearance_mode)
@@ -127,10 +129,6 @@ class App(ctk.CTk):
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         ctk.set_widget_scaling(new_scaling_float)
-
-    def sidebar_button_event(self):
-        print("sidebar_button click")
-
 
     def run_numbers_game(self):
         number_of_big = ctk.CTkInputDialog(text = "How many big numbers? [1,2,3,4]", title = 'Big Numbers')
@@ -163,6 +161,7 @@ class App(ctk.CTk):
             solutions = list()
             solve(target, numbers, list(), solutions)
             unique = list()
+            global final
             final = list()
             for s in solutions:
                 a = ''.join(sorted(s))
@@ -171,6 +170,10 @@ class App(ctk.CTk):
                     final.append(s)
             for s in final:  # print them out
                 print(s)
+
+            global best_solution
+            best_solution = (min(final, key=len))
+
             print(f"There are a total of {len(final)} solutions.")
 
         def solve(target, numbers, path, solutions):
@@ -201,6 +204,19 @@ class App(ctk.CTk):
             else:
                 lst.append(ans)
                 solve(target, lst, newpath, solutions)
+
+
+
+        def display_best_solution():
+            best_solution_text = ctk.CTkTextbox(gui2, height = 40)
+            best_solution_text.grid(row=brn+7, column=1, padx=20, pady=(20, 10))
+            best_solution_text.insert('0.0', f'{best_solution}' )
+
+
+        def display_all_solutions():
+            all_solutions_text = ctk.CTkTextbox(gui2, height = 40)
+            all_solutions_text.grid(row=brn+7, column=3, padx=20, pady=(20, 10))
+            all_solutions_text.insert('0.0', f'{final}' )
 
         def switch():
             if buttonc["state"] == "normal":
@@ -346,6 +362,12 @@ class App(ctk.CTk):
         Rbracket = ctk.CTkButton(gui2, text=')', command=lambda: press(')'))
         Rbracket.grid(row=brn + 5, column=2)
 
+        best_words = ctk.CTkButton(gui2, text = 'Display best solutions', command = display_best_solution)
+        best_words.grid(row = brn+7, column = 0)
+
+        all_words = ctk.CTkButton(gui2, text='Display all solutions', command=display_all_solutions)
+        all_words.grid(row=brn+7, column=2)
+
         timer_string_var = ctk.StringVar(gui2)
         time_b = ctk.CTkButton(gui2, textvariable=timer_string_var)
         time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
@@ -456,7 +478,7 @@ class App(ctk.CTk):
 
 
         making_letters()
-        bcn = 0  # Base column number
+        bcn = 1  # Base column number
 
         letter0 = ctk.CTkButton(gui, text=f' {letters[0]} ', font=('arial', 20, 'bold'))
         letter0.configure(state="disabled")
@@ -509,9 +531,10 @@ class App(ctk.CTk):
         score_label = ctk.CTkLabel(gui, text = f'Score: {score}')
         score_label.grid(row = 0, column = 0)
 
-
-
         buttonc = Button(gui, text=f'Constant button')
+    
+
+
 
         # vowels_label = ctk.CTkLabel(gui, text="vowels:", anchor="w")
         # vowels_label.grid(row=5, column=0, padx=20, pady=(10, 0))
@@ -560,4 +583,5 @@ class App(ctk.CTk):
 
 if __name__ == "__main__":
     app = App()
+
     app.mainloop()

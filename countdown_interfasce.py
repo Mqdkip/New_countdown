@@ -1,6 +1,6 @@
 #todo Undo button
 
-import tkinter
+
 from datetime import datetime
 from tkinter import *  # import everything from tkinter module
 from tkinter import messagebox
@@ -27,8 +27,7 @@ def making():
     global target
     target = randint(100, 999)
 
-def making2():
-    print('aa')
+def solutions_list():
     solutions = list()
     solve(target, numbers, list(), solutions)
     unique = list()
@@ -38,9 +37,13 @@ def making2():
         if not a in unique:
             unique.append(a)
             final.append(s)
+
     for s in final:  # print them out
         print(s)
     print(f"There are a total of {len(final)} solutions.")
+    print(min(final, key = len))
+
+
 def solve(target, numbers, path, solutions):
     if len(numbers) == 1:
         return
@@ -99,7 +102,7 @@ def switch():
         multiply.configure(state = "disabled")
         divide.configure(state = "disabled")
 
-def number_press_delete(b, n):
+def press_switch_delete(b, n):
     press(n)
     switch()
     b.grid_remove()
@@ -150,7 +153,7 @@ def remember():
         button1.grid()
 
 if __name__ == "__main__":
-    gui2 = ctk.CTk()  # create a gui2 window
+    gui2 = ctk.CTk()  # create a gui2 win   dow
     gui2.configure(background="white")  # set the background colour of gui2 window
     gui2.title("Countdown")  # set the title of gui2 window
     # gui2.geometry("700x500")  # set the configuration of gui2 window
@@ -169,27 +172,27 @@ target_label.grid(row = brn+1, column = 0, padx = 10, pady = 10)
 buttonc = Button(gui2, text=f'Constant button')
 
 button0 = ctk.CTkButton(gui2, text=f' {numbers[0]} ', font=('arial', 20, 'bold'))
-button0.configure(command=functools.partial(number_press_delete, button0, numbers[0]))
+button0.configure(command=functools.partial(press_switch_delete, button0, numbers[0]))
 button0.grid(row=brn+3, column=0, padx = 10, pady = 10)
 
 button1 = ctk.CTkButton(gui2, text=f' {numbers[1]} ', font=('arial', 20, 'bold'))
-button1.configure(command=functools.partial(number_press_delete, button1, numbers[1]))
+button1.configure(command=functools.partial(press_switch_delete, button1, numbers[1]))
 button1.grid(row=brn+3, column=1, padx = 10, pady = 10)
 
 button2 = ctk.CTkButton(gui2, text=f' {numbers[2]} ', font=('arial', 20, 'bold'))
-button2.configure(command=functools.partial(number_press_delete, button2, numbers[2]))
+button2.configure(command=functools.partial(press_switch_delete, button2, numbers[2]))
 button2.grid(row=brn+3, column=2, padx = 10, pady = 10)
 
 button3 = ctk.CTkButton(gui2, text=f' {numbers[3]} ', font=('arial', 20, 'bold'))
-button3.configure(command=functools.partial(number_press_delete, button3, numbers[3]))
+button3.configure(command=functools.partial(press_switch_delete, button3, numbers[3]))
 button3.grid(row=brn+4, column=0, padx = 10, pady = 10)
 
 button4 = ctk.CTkButton(gui2, text=f' {numbers[4]} ', font=('arial', 20, 'bold'))
-button4.configure(command=functools.partial(number_press_delete, button4, numbers[4]))
+button4.configure(command=functools.partial(press_switch_delete, button4, numbers[4]))
 button4.grid(row=brn+4, column=1, padx = 10, pady = 10)
 
 button5 = ctk.CTkButton(gui2, text=f' {numbers[5]} ', font=('arial', 20, 'bold'))
-button5.configure(command=functools.partial(number_press_delete, button5, numbers[5]))
+button5.configure(command=functools.partial(press_switch_delete, button5, numbers[5]))
 button5.grid(row=brn+4, column=2, padx = 10, pady = 10)
 
 # operation buttons
@@ -230,7 +233,7 @@ time_b = ctk.CTkButton(gui2, textvariable=timer_string_var)
 time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
 time_b.grid(row=brn + 1, column=1)
 
-t_seconds = 3
+t_seconds = 30
 def update_gui2():
     global t_seconds
     timer = datetime.timedelta(seconds=t_seconds)
@@ -244,5 +247,5 @@ def update_gui2():
 gui2.after(1000, update_gui2)
 
 
-making2()
+solutions_list()
 gui2.mainloop()  # start the gui2

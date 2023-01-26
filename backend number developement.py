@@ -17,10 +17,14 @@ def making():
     number_of_big = int(input("How many big numbers: "))
     lob = random.sample(big_options, number_of_big)  # length of big
     los = random.sample(small_options, (6 - number_of_big))  # length of low
+    global nums
     nums = [*los, *lob]
+    global target
     target = randint(100, 999)
     print(f"The aim is to make {target} using {nums}")
+    solutions_list()
 
+def solutions_list():
     solutions = list()
     solve(target, nums, list(), solutions)
     unique = list()
@@ -38,7 +42,7 @@ def making():
 def solve(target, nums, path, solutions):
     if len(nums) == 1:
         return
-    distinct = sorted(list(set(nums)), reverse=True)
+    distinct = sorted(list(set(nums)), reverse=False)
     remainder = list(distinct)
     for n1 in distinct:  # reduce list by combining a pair
         remainder.remove(n1)
@@ -68,3 +72,4 @@ def combine(target, solutions, path, rem2, n1, n2, symb):
 
 if __name__ == "__main__":
     making()
+

@@ -13,18 +13,18 @@ cons = random.choices(consonants, weights=(2, 3, 6, 2, 3, 2, 1, 1, 5, 4, 8, 4, 1
                           k=number_of_consonants)
 letters = [ops.lower() for ops in [*vow, *cons]]
 print(letters)
-all_possible = []
-# Next, let's define a list of words that we want to check
+
+
+
+user_word =  input("Input word using letters in the list provided")
+#Defining a list of words that we want to check
 with open('/usr/share/dict/words', 'r') as f:
     words = f.read().split()
-word =  input("Input word using letters in the list provided")
-global score
-score = 0
-if word in words:
-    score += len(word)
-    print(score)
+
+
 
 # Now, we can iterate through the list of words and check if they can be made from the list of letters
+all_possible = []
 for word in words:
     remaining_letters = letters[:]
     can_make_word = True
@@ -46,14 +46,21 @@ for word in words:
         all_possible.append(word)
 print(all_possible)
 
+
+score = 0
+print(user_word)
+if user_word in all_possible:
+    score += len(user_word)
+    print(f'score is {score}')
+
 # Find the maximum length of the words
 max_length = max(len(word) for word in all_possible)
-
 # Use a list comprehension to find the longest words
 longest_words = [word for word in all_possible if len(word) == max_length]
-
 # Print the longest words
 print(f"The longest words are: {longest_words}")
+
+
 
 
 
