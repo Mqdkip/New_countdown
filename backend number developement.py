@@ -19,8 +19,10 @@ def making():
     los = random.sample(small_options, (6 - number_of_big))  # length of low
     global nums
     nums = [*los, *lob]
+    nums = [50,10,8,3,3,9]
     global target
     target = randint(100, 999)
+    target = 698
     print(f"The aim is to make {target} using {nums}")
     solutions_list()
 

@@ -11,49 +11,311 @@ ctk.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
 
+
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        sidebar()
-        tabview()
-
-
-class sidebar(App):
-    def __init__(self):
-        self.sidebar_button_event = None
-        self.title("Countdown")
         self.geometry(f"{1100}x{580}")
+        self.title("Countdown")
+        self.resizable(True, True)
+
+        self.sidebar_frame = Sidebar(self)
+        #self.tabview = Tabview(self)
+
+        self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
+        self.sidebar_frame.grid_rowconfigure(4, weight=1)
 
         # configure grid layout (4x4)
+
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
         self.grid_rowconfigure((0, 1, 2), weight=1)
 
-        # create sidebar frame with widgets
+    def making(self):
+        global score
+        score = 0
+        big_options = [25, 50, 75, 100]
+        small_options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        lob = random.sample(big_options, nob)  # big numbers used in number list
+        los = random.sample(small_options, (6 - nob))  # small numbers used in number list
+        #global numbers
+        self.numbers = [*los, *lob]
+        #global target
+        self.target = randint(100, 999)
 
-        self.sidebar_frame = ctk.CTkFrame(self, width=140, corner_radius=0)
-        self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
-        self.sidebar_frame.grid_rowconfigure(4, weight=1)
-        self.logo_label = ctk.CTkLabel(self.sidebar_frame, text="Countdown",
+    def solutions_list(self):
+        solutions = list()
+        self.solve(self, self.target, self.numbers, list(), solutions)
+        unique = list()
+        global final
+        final = list()
+        for s in solutions:
+            a = ''.join(sorted(s))
+            if not a in unique:
+                unique.append(a)
+                final.append(s)
+        for s in final:  # print them out
+            print(s)
+
+        global best_solution
+        best_solution = (min(final, key=len))
+
+        print(f"There are a total of {len(final)} solutions.")
+
+    def solve(self, target, numbers, path, solutions):
+        if len(numbers) == 1:
+            return
+        distinct = sorted(list(set(numbers)), reverse=True)
+        remainder = list(distinct)
+        for n1 in distinct:  # reduce list by combining a pair
+            remainder.remove(n1)
+            for n2 in remainder:
+                rem2 = list(
+                    numbers)  # in case of duplicates we need to start with full list and take out the n1,n2 pair of elements
+                rem2.remove(n1)
+                rem2.remove(n2)
+                self.combine(target, solutions, path, rem2, n1, n2, '+')
+                self.combine(target, solutions, path, rem2, n1, n2, '-')
+                if n2 > 1:
+                    self.combine(target, solutions, path, rem2, n1, n2, '*')
+                    if not n1 % n2:
+                        self.combine(target, solutions, path, rem2, n1, n2, '//')
+
+    def combine(self, target, solutions, path, rem2, n1, n2, symb):
+        lst = list(rem2)
+        ans = eval("{0}{2}{1}".format(n1, n2, symb))
+        newpath = path + ["{0}{3}{1}={2}".format(n1, n2, ans, symb[0])]
+        if ans == target:
+            solutions += [newpath]
+        else:
+            lst.append(ans)
+            self.solve(target, lst, newpath, solutions)
+
+    brn = 0 # base row number
+    def display_best_solution(self):
+        best_solution_text = ctk.CTkTextbox(self.gui2, height=40)
+        best_solution_text.grid(row=self.brn + 7, column=1, padx=20, pady=(20, 10))
+        best_solution_text.insert('0.0', f'{best_solution}')
+
+    def display_all_solutions(self):
+        all_solutions_text = ctk.CTkTextbox(self.gui2, height=40)
+        all_solutions_text.grid(row=self.brn + 7, column=3, padx=20, pady=(20, 10))
+        all_solutions_text.insert('0.0', f'{final}')
+
+    def switch(self):
+        if self.buttonc["state"] == "normal":
+            self.buttonc.configure(state="disabled")
+            self.button0.configure(state="disabled")
+            self.button1.configure(state="disabled")
+            self.button2.configure(state="disabled")
+            self.button3.configure(state="disabled")
+            self.button4.configure(state="disabled")
+            self.button5.configure(state="disabled")
+            self.plus.configure(state="normal")
+            self.minus.configure(state="normal")
+            self.multiply.configure(state="normal")
+            self.divide.configure(state="normal")
+
+        else:
+            self.buttonc.configure(state="normal")
+            self.button0.configure(state="normal")
+            self.button1.configure(state="normal")
+            self.button2.configure(state="normal")
+            self.button3.configure(state="normal")
+            self.button4.configure(state="normal")
+            self.button5.configure(state="normal")
+            self.plus.configure(state="disabled")
+            self.minus.configure(state="disabled")
+            self.multiply.configure(state="disabled")
+            self.divide.configure(state="disabled")
+
+    def number_press_delete(b, n):
+        self.press(n)
+        self.switch()
+        b.grid_remove()
+
+    # Button initialisation
+    # On click of a button, the result enters the expression bar
+    expression = ""
+
+    def press(self, num):
+        global expression
+        expression = expression + str(num)  # Concatenation of string
+        self.equation.set(expression)  # Update the expression by using set method
+
+    # Function to evaluate the final expression
+    def equalpress(self):
+        try:  # Try and except statement is used for handling the errors like zero
+            global expression
+            total = str(eval(expression))
+            self.equation.set(total)
+            print(total)
+            expression = ""  # initialize the expression variable
+        # if error is generate then handle by the except block
+        except:
+            self.equation.set(" error ")
+            expression = ""
+
+        difference = abs(self.target - float(total))
+        if difference == 0:
+            score += 10
+            print(score)
+        elif difference < 10:
+            score += 10 - difference
+            print(score)
+        else:
+            print("Number evaluated is too far from target to score any points")
+
+    # Function to clear the contents of text entry box
+    def clear(self):
+        self.expression = ""
+
+        self.equation.set("")
+
+    def operand_press_switch(op):
+        self.press(op)
+        self.switch()
+
+    def run_numbers_game(self):
+        number_of_big = ctk.CTkInputDialog(text="How many big numbers? [1,2,3,4]", title='Big Numbers')
+        nob = number_of_big.get_input()
+        nob = int(nob)
+        if nob < 1 or nob > 4:
+            self.run_numbers_game()
+        gui2 = ctk.CTkToplevel(self)
+        gui2.configure(background="black")  # set the background colour of GUI window
+        gui2.title("Countdown Numbers")
+
+        equation = StringVar()  # StringVar() is the variable class we create an instance of this class
+        expression_field = Entry(gui2, textvariable=equation)  # create the text entry box for showing the expression.
+        expression_field.grid(columnspan=4,
+                              ipadx=100)  # grid method is used for placing the widgets at respective positions in table like structure.
+
+        # Making the big number and developing all possible solutions
+
+        self.making()
+
+
+        target_label = ctk.CTkButton(gui2, text=f"Target is {self.target}", text_color=("red"))
+        target_label.configure(state="disabled", fg_color='red', text_color_disabled='white')
+        target_label.grid(row=self.brn + 1, column=0, padx=10, pady=10)
+
+        buttonc = Button(gui2, text=f'Constant button')
+
+        button0 = ctk.CTkButton(gui2, text=f' {self.numbers[0]} ', font=('arial', 20, 'bold'))
+        button0.configure(command=functools.partial(self.number_press_delete, button0, numbers[0]))
+        button0.grid(row=self.brn + 3, column=0, padx=10, pady=10)
+
+        button1 = ctk.CTkButton(gui2, text=f' {self.numbers[1]} ', font=('arial', 20, 'bold'))
+        button1.configure(command=functools.partial(self.number_press_delete, button1, numbers[1]))
+        button1.grid(row=self.brn + 3, column=1, padx=10, pady=10)
+
+        button2 = ctk.CTkButton(gui2, text=f' {self.numbers[2]} ', font=('arial', 20, 'bold'))
+        button2.configure(command=functools.partial(self.number_press_delete, button2, numbers[2]))
+        button2.grid(row=brn + 3, column=2, padx=10, pady=10)
+
+        button3 = ctk.CTkButton(gui2, text=f' {self.numbers[3]} ', font=('arial', 20, 'bold'))
+        button3.configure(command=functools.partial(self.number_press_delete, button3, numbers[3]))
+        button3.grid(row=self.brn + 4, column=0, padx=10, pady=10)
+
+        button4 = ctk.CTkButton(gui2, text=f' {self.numbers[4]} ', font=('arial', 20, 'bold'))
+        button4.configure(command=functools.partial(self.number_press_delete, button4, numbers[4]))
+        button4.grid(row=self.brn + 4, column=1, padx=10, pady=10)
+
+        button5 = ctk.CTkButton(gui2, text=f' {self.numbers[5]} ', font=('arial', 20, 'bold'))
+        button5.configure(command=functools.partial(self.number_press_delete, button5, numbers[5]))
+        button5.grid(row=self.brn + 4, column=2, padx=10, pady=10)
+
+        # operation buttons
+        plus = ctk.CTkButton(gui2, text=' + ')
+        plus.configure(command=functools.partial(self.operand_press_switch, ' + '))
+        plus.grid(row=self.brn + 3, column=3)
+
+        minus = ctk.CTkButton(gui2, text=' - ')
+        minus.configure(command=functools.partial(self.operand_press_switch, '-'))
+        minus.grid(row=self.brn + 4, column=3)
+
+        multiply = ctk.CTkButton(gui2, text=' * ')
+        multiply.configure(command=functools.partial(operand_press_switch, '*'))
+        multiply.grid(row=brn + 5, column=3)
+
+        divide = ctk.CTkButton(gui2, text=' / ')
+        divide.configure(command=functools.partial(operand_press_switch, '/'))
+        divide.grid(row=brn + 6, column=3)
+
+        equal = ctk.CTkButton(gui2, text=' = ', command=equalpress)
+        equal.grid(row=brn + 6, column=2, padx=10, pady=10)
+
+        clear = ctk.CTkButton(gui2, text='Clear', command=clear)
+        clear.grid(row=brn + 5, column='0', padx=10, pady=10)
+
+        undo_button = ctk.CTkButton(gui2, text='Undo', font=('arial', 20, 'bold'))
+        undo_button.configure(command=remember())
+        undo_button.grid(row=brn + 6, column=0)
+
+        Lbracket = ctk.CTkButton(gui2, text='(', command=lambda: press('('))
+        Lbracket.grid(row=brn + 5, column=1)
+
+        Rbracket = ctk.CTkButton(gui2, text=')', command=lambda: press(')'))
+        Rbracket.grid(row=brn + 5, column=2)
+
+        best_words = ctk.CTkButton(gui2, text='Display best solutions', command=display_best_solution)
+        best_words.grid(row=brn + 7, column=0)
+
+        all_words = ctk.CTkButton(gui2, text='Display all solutions', command=display_all_solutions)
+        all_words.grid(row=brn + 7, column=2)
+
+        timer_string_var = ctk.StringVar(gui2)
+        time_b = ctk.CTkButton(gui2, textvariable=timer_string_var)
+        time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
+        time_b.grid(row=brn + 1, column=1)
+
+        t_seconds = 3
+
+        def update_gui2():
+            global t_seconds
+            timer = datetime.timedelta(seconds=t_seconds)
+            timer_string_var.set(timer)
+            t_seconds -= 1
+            if (t_seconds == 0):
+                messagebox.showinfo("Time Countdown", "Time's up ")
+            gui2.update()
+            gui2.after(1000, update_gui2)
+
+        gui2.after(1000, update_gui2)
+
+        self.solutions_list()
+        gui2.mainloop()  # start the gui2
+
+class Sidebar(ctk.CTkFrame):
+    def __init__(self, parent_app):
+        super().__init__(parent_app, width=140, corner_radius=0)
+        self.change_scaling_event = None
+        self.change_appearance_mode_event = None
+        self.run_letters_game = None
+        self.sidebar_button_event = None
+        self.parent_app = parent_app
+        # create sidebar frame with widgets
+        self.logo_label = ctk.CTkLabel(self, text="Countdown",
                                        font=ctk.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.sidebar_button_1 = ctk.CTkButton(self.sidebar_frame, text='Home', command=self.sidebar_button_event)
+        self.sidebar_button_1 = ctk.CTkButton(self, text='Home', command=self.sidebar_button_event)
         self.sidebar_button_1.grid(row=1, column=0, padx=20, pady=10)
-        self.play_numbers_game = ctk.CTkButton(self.sidebar_frame, text='Numbers Game',
-                                               command=self.run_numbers_game)
+        self.play_numbers_game = ctk.CTkButton(self, text='Numbers Game',
+                                               command=parent_app.run_numbers_game)
         self.play_numbers_game.grid(row=2, column=0, padx=20, pady=10)
-        self.play_letters_game = ctk.CTkButton(self.sidebar_frame, text='Letters Game',
+        self.play_letters_game = ctk.CTkButton(self, text='Letters Game',
                                                command=self.run_letters_game)
         self.play_letters_game.grid(row=3, column=0, padx=20, pady=10)
-        self.appearance_mode_label = ctk.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
+        self.appearance_mode_label = ctk.CTkLabel(self, text="Appearance Mode:", anchor="w")
         self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
-        self.appearance_mode_optionemenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"],
+        self.appearance_mode_optionemenu = ctk.CTkOptionMenu(self, values=["Light", "Dark", "System"],
                                                              command=self.change_appearance_mode_event)
         self.appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
-        self.scaling_label = ctk.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
+        self.scaling_label = ctk.CTkLabel(self, text="UI Scaling:", anchor="w")
         self.scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
-        self.scaling_optionemenu = ctk.CTkOptionMenu(self.sidebar_frame,
+        self.scaling_optionemenu = ctk.CTkOptionMenu(self,
                                                      values=["80%", "90%", "100%", "110%", "120%"],
                                                      command=self.change_scaling_event)
         self.scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
@@ -137,263 +399,6 @@ def change_scaling_event(self, new_scaling: str):
     ctk.set_widget_scaling(new_scaling_float)
 
 
-def run_numbers_game(self):
-    number_of_big = ctk.CTkInputDialog(text="How many big numbers? [1,2,3,4]", title='Big Numbers')
-    nob = number_of_big.get_input()
-    nob = int(nob)
-    if nob < 1 or nob > 4:
-        self.run_numbers_game()
-    gui2 = ctk.CTkToplevel(self)
-    gui2.configure(background="black")  # set the background colour of GUI window
-    gui2.title("Countdown Numbers")
-
-    equation = StringVar()  # StringVar() is the variable class we create an instance of this class
-    expression_field = Entry(gui2, textvariable=equation)  # create the text entry box for showing the expression.
-    expression_field.grid(columnspan=4,
-                          ipadx=100)  # grid method is used for placing the widgets at respective positions in table like structure.
-
-    # Making the big number and developing all possible solutions
-    def making():
-        global score
-        score = 0
-        big_options = [25, 50, 75, 100]
-        small_options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        lob = random.sample(big_options, nob)  # big numbers used in number list
-        los = random.sample(small_options, (6 - nob))  # small numbers used in number list
-        global numbers
-        numbers = [*los, *lob]
-        global target
-        target = randint(100, 999)
-
-    def solutions_list():
-        solutions = list()
-        solve(target, numbers, list(), solutions)
-        unique = list()
-        global final
-        final = list()
-        for s in solutions:
-            a = ''.join(sorted(s))
-            if not a in unique:
-                unique.append(a)
-                final.append(s)
-        for s in final:  # print them out
-            print(s)
-
-        global best_solution
-        best_solution = (min(final, key=len))
-
-        print(f"There are a total of {len(final)} solutions.")
-
-    def solve(target, numbers, path, solutions):
-        if len(numbers) == 1:
-            return
-        distinct = sorted(list(set(numbers)), reverse=True)
-        remainder = list(distinct)
-        for n1 in distinct:  # reduce list by combining a pair
-            remainder.remove(n1)
-            for n2 in remainder:
-                rem2 = list(
-                    numbers)  # in case of duplicates we need to start with full list and take out the n1,n2 pair of elements
-                rem2.remove(n1)
-                rem2.remove(n2)
-                combine(target, solutions, path, rem2, n1, n2, '+')
-                combine(target, solutions, path, rem2, n1, n2, '-')
-                if n2 > 1:
-                    combine(target, solutions, path, rem2, n1, n2, '*')
-                    if not n1 % n2:
-                        combine(target, solutions, path, rem2, n1, n2, '//')
-
-    def combine(target, solutions, path, rem2, n1, n2, symb):
-        lst = list(rem2)
-        ans = eval("{0}{2}{1}".format(n1, n2, symb))
-        newpath = path + ["{0}{3}{1}={2}".format(n1, n2, ans, symb[0])]
-        if ans == target:
-            solutions += [newpath]
-        else:
-            lst.append(ans)
-            solve(target, lst, newpath, solutions)
-
-    def display_best_solution():
-        best_solution_text = ctk.CTkTextbox(gui2, height=40)
-        best_solution_text.grid(row=brn + 7, column=1, padx=20, pady=(20, 10))
-        best_solution_text.insert('0.0', f'{best_solution}')
-
-    def display_all_solutions():
-        all_solutions_text = ctk.CTkTextbox(gui2, height=40)
-        all_solutions_text.grid(row=brn + 7, column=3, padx=20, pady=(20, 10))
-        all_solutions_text.insert('0.0', f'{final}')
-
-    def switch():
-        if buttonc["state"] == "normal":
-            buttonc.configure(state="disabled")
-            button0.configure(state="disabled")
-            button1.configure(state="disabled")
-            button2.configure(state="disabled")
-            button3.configure(state="disabled")
-            button4.configure(state="disabled")
-            button5.configure(state="disabled")
-            plus.configure(state="normal")
-            minus.configure(state="normal")
-            multiply.configure(state="normal")
-            divide.configure(state="normal")
-
-        else:
-            buttonc.configure(state="normal")
-            button0.configure(state="normal")
-            button1.configure(state="normal")
-            button2.configure(state="normal")
-            button3.configure(state="normal")
-            button4.configure(state="normal")
-            button5.configure(state="normal")
-            plus.configure(state="disabled")
-            minus.configure(state="disabled")
-            multiply.configure(state="disabled")
-            divide.configure(state="disabled")
-
-    def number_press_delete(b, n):
-        press(n)
-        switch()
-        b.grid_remove()
-
-    # Button initialisation
-    # On click of a button, the result enters the expression bar
-    expression = ""
-
-    def press(num):
-        global expression
-        expression = expression + str(num)  # Concatenation of string
-        equation.set(expression)  # Update the expression by using set method
-
-    # Function to evaluate the final expression
-    def equalpress():
-        try:  # Try and except statement is used for handling the errors like zero
-            global expression
-            total = str(eval(expression))
-            equation.set(total)
-            print(total)
-            expression = ""  # initialize the expression variable
-        # if error is generate then handle by the except block
-        except:
-            equation.set(" error ")
-            expression = ""
-
-        difference = abs(target - float(total))
-        if difference == 0:
-            score += 10
-            print(score)
-        elif difference < 10:
-            score += 10 - difference
-            print(score)
-        else:
-            print("Number evaluated is too far from target to score any points")
-
-    # Function to clear the contents of text entry box
-    def clear():
-        global expression
-        expression = ""
-        equation.set("")
-
-    def operand_press_switch(op):
-        press(op)
-        switch()
-
-    def remember():
-        if not button1.winfo_viewable():
-            button1.grid()
-
-    making()
-    brn = 0  # base row number
-
-    target_label = ctk.CTkButton(gui2, text=f"Target is {target}", text_color=("red"))
-    target_label.configure(state="disabled", fg_color='red', text_color_disabled='white')
-    target_label.grid(row=brn + 1, column=0, padx=10, pady=10)
-
-    buttonc = Button(gui2, text=f'Constant button')
-
-    button0 = ctk.CTkButton(gui2, text=f' {numbers[0]} ', font=('arial', 20, 'bold'))
-    button0.configure(command=functools.partial(number_press_delete, button0, numbers[0]))
-    button0.grid(row=brn + 3, column=0, padx=10, pady=10)
-
-    button1 = ctk.CTkButton(gui2, text=f' {numbers[1]} ', font=('arial', 20, 'bold'))
-    button1.configure(command=functools.partial(number_press_delete, button1, numbers[1]))
-    button1.grid(row=brn + 3, column=1, padx=10, pady=10)
-
-    button2 = ctk.CTkButton(gui2, text=f' {numbers[2]} ', font=('arial', 20, 'bold'))
-    button2.configure(command=functools.partial(number_press_delete, button2, numbers[2]))
-    button2.grid(row=brn + 3, column=2, padx=10, pady=10)
-
-    button3 = ctk.CTkButton(gui2, text=f' {numbers[3]} ', font=('arial', 20, 'bold'))
-    button3.configure(command=functools.partial(number_press_delete, button3, numbers[3]))
-    button3.grid(row=brn + 4, column=0, padx=10, pady=10)
-
-    button4 = ctk.CTkButton(gui2, text=f' {numbers[4]} ', font=('arial', 20, 'bold'))
-    button4.configure(command=functools.partial(number_press_delete, button4, numbers[4]))
-    button4.grid(row=brn + 4, column=1, padx=10, pady=10)
-
-    button5 = ctk.CTkButton(gui2, text=f' {numbers[5]} ', font=('arial', 20, 'bold'))
-    button5.configure(command=functools.partial(number_press_delete, button5, numbers[5]))
-    button5.grid(row=brn + 4, column=2, padx=10, pady=10)
-
-    # operation buttons
-    plus = ctk.CTkButton(gui2, text=' + ')
-    plus.configure(command=functools.partial(operand_press_switch, ' + '))
-    plus.grid(row=brn + 3, column=3)
-
-    minus = ctk.CTkButton(gui2, text=' - ')
-    minus.configure(command=functools.partial(operand_press_switch, '-'))
-    minus.grid(row=brn + 4, column=3)
-
-    multiply = ctk.CTkButton(gui2, text=' * ')
-    multiply.configure(command=functools.partial(operand_press_switch, '*'))
-    multiply.grid(row=brn + 5, column=3)
-
-    divide = ctk.CTkButton(gui2, text=' / ')
-    divide.configure(command=functools.partial(operand_press_switch, '/'))
-    divide.grid(row=brn + 6, column=3)
-
-    equal = ctk.CTkButton(gui2, text=' = ', command=equalpress)
-    equal.grid(row=brn + 6, column=2, padx=10, pady=10)
-
-    clear = ctk.CTkButton(gui2, text='Clear', command=clear)
-    clear.grid(row=brn + 5, column='0', padx=10, pady=10)
-
-    undo_button = ctk.CTkButton(gui2, text='Undo', font=('arial', 20, 'bold'))
-    undo_button.configure(command=remember())
-    undo_button.grid(row=brn + 6, column=0)
-
-    Lbracket = ctk.CTkButton(gui2, text='(', command=lambda: press('('))
-    Lbracket.grid(row=brn + 5, column=1)
-
-    Rbracket = ctk.CTkButton(gui2, text=')', command=lambda: press(')'))
-    Rbracket.grid(row=brn + 5, column=2)
-
-    best_words = ctk.CTkButton(gui2, text='Display best solutions', command=display_best_solution)
-    best_words.grid(row=brn + 7, column=0)
-
-    all_words = ctk.CTkButton(gui2, text='Display all solutions', command=display_all_solutions)
-    all_words.grid(row=brn + 7, column=2)
-
-    timer_string_var = ctk.StringVar(gui2)
-    time_b = ctk.CTkButton(gui2, textvariable=timer_string_var)
-    time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
-    time_b.grid(row=brn + 1, column=1)
-
-    t_seconds = 3
-
-    def update_gui2():
-        global t_seconds
-        timer = datetime.timedelta(seconds=t_seconds)
-        timer_string_var.set(timer)
-        t_seconds -= 1
-        if (t_seconds == 0):
-            messagebox.showinfo("Time Countdown", "Time's up ")
-        gui2.update()
-        gui2.after(1000, update_gui2)
-
-    gui2.after(1000, update_gui2)
-
-    solutions_list()
-    gui2.mainloop()  # start the gui2
 
 
 def run_letters_game(self):
