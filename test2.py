@@ -1,83 +1,78 @@
-import time
-from tkinter import *
-from tkinter import messagebox
+import tkinter as tk
+from tkinter import ttk
 
-# creating Tk window
-root = Tk()
+class windows(tk.Tk):
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+        # Adding a title to the window
+        self.wm_title("Test Application")
 
-# setting geometry of tk window
-root.geometry("300x250")
+        # creating a frame and assigning it to container
+        container = tk.Frame(self, height=400, width=600)
+        # specifying the region where the frame is packed in root
+        container.pack(side="top", fill="both", expand=True)
 
-# Using title() to display a message in
-# the dialogue box of the message in the
-# title bar.
-root.title("Time Counter")
+        # configuring the location of the container using grid
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
 
-# Declaration of variables
+        # We will now create a dictionary of frames
+        self.frames = {}
+        # we'll create the frames themselves later but let's add the components to the dictionary.
+        for F in (MainPage, SidePage, CompletionScreen):
+            frame = F(container, self)
 
-second = StringVar()
+            # the windows class acts as the root window for the frames.
+            self.frames[F] = frame
+            frame.grid(row=0, column=0, sticky="nsew")
 
-# setting the default value as 0
+        # Using a method to switch frames
+        self.show_frame(MainPage)
 
-second.set("30")
+    def show_frame(self, cont):
+        frame = self.frames[cont]
+        # raises the current frame to the top
+        frame.tkraise()
 
-# Use of Entry class to take input from the user
+class MainPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        label = tk.Label(self, text="Main Page")
+        label.pack(padx=10, pady=10)
 
-
-
-secondEntry = Button(root, width=3, font=("Arial", 18, ""),
-                    textvariable=second)
-secondEntry.place(x=180, y=20)
-
-
-def submit():
-    try:
-        # the input provided by the user is
-        # stored in here :temp
-        temp = int(second.get())
-    except:
-        print("Please input the right value")
-    while temp > -1:
-
-        # divmod(firstvalue = temp//60, secondvalue = temp%60)
-        mins, secs = divmod(temp, 60)
-
-        # Converting the input entered in mins or secs to hours,
-        # mins ,secs(input = 110 min --> 120*60 = 6600 => 1hr :
-        # 50min: 0sec)
-        hours = 0
-        if mins > 60:
-            # divmod(firstvalue = temp//60, secondvalue
-            # = temp%60)
-            hours, mins = divmod(mins, 60)
-
-        # using format () method to store the value up to
-        # two decimal places
-        hour.set("{0:2d}".format(hours))
-        minute.set("{0:2d}".format(mins))
-        second.set("{0:2d}".format(secs))
-
-        # updating the GUI window after decrementing the
-        # temp value every time
-        root.update()
-        time.sleep(1)
-
-        # when temp value = 0; then a messagebox pop's up
-        # with a message:"Time's up"
-        if (temp == 0):
-            messagebox.showinfo("Time Countdown", "Time's up ")
-
-        # after every one sec the value of temp will be decremented
-        # by one
-        temp -= 1
+        # We use the switch_window_button in order to call the show_frame() method as a lambda function
+        switch_window_button = tk.Button(
+            self,
+            text="Go to the Side Page",
+            command=lambda: controller.show_frame(SidePage),
+        )
+        switch_window_button.pack(side="bottom", fill=tk.X)
 
 
-# button widget
-btn = Button(root, text='Set Time Countdown', bd='5',
-             command=submit)
-btn.place(x=70, y=120)
+class SidePage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        label = tk.Label(self, text="This is the Side Page")
+        label.pack(padx=10, pady=10)
 
-# infinite loop which is required to
-# run tkinter program infinitely
-# until an interrupt occurs
-root.mainloop()
+        switch_window_button = tk.Button(
+            self,
+            text="Go to the Completion Screen",
+            command=lambda: controller.show_frame(CompletionScreen),
+        )
+        switch_window_button.pack(side="bottom", fill=tk.X)
+
+
+class CompletionScreen(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        label = tk.Label(self, text="Completion Screen, we did it!")
+        label.pack(padx=10, pady=10)
+        switch_window_button = ttk.Button(
+            self, text="Return to menu", command=lambda: controller.show_frame(MainPage)
+        )
+        switch_window_button.pack(side="bottom", fill=tk.X)
+
+if __name__ == "__main__":
+    testObj = windows()
+    testObj.mainloop()
