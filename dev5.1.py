@@ -13,7 +13,7 @@ ctk.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark
 
 class App(ctk.CTk):
 
-    def __init__(self):
+    def __init__(self, controller=None):
 
         super().__init__()
         self.geometry(f"{1100}x{580}")
