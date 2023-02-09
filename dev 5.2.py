@@ -10,7 +10,7 @@ class App(ctk.CTk):
         self.title("Countdown")
         self.resizable(True, True)
         self.sidebar_frame = Sidebar(self)
-        # self.tabview = Tabview(self)
+
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(4, weight=1)
         # configure grid layout (4x4)
@@ -54,9 +54,60 @@ class Sidebar(ctk.CTkFrame):
         Frame.mainloop()
 
 
+# class Tabview(ctk.CTkFrame):
+#     # create tabview
+#     def __init__(self, parent_app):
+#         super.__init__(parent_app)
+#         self.tabview = ctk.CTkTabview(self, width=250)
+#         self.tabview.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
+#         self.tabview.add("Information about the Game")
+#         self.tabview.add("How to Play")
+#         self.tabview.add("About the Developer")
+#         self.tabview.tab("Information about the Game").grid_columnconfigure(0,
+#                                                                             weight=1)  # configure grid of individual tabs
+#         self.tabview.tab("How to Play").grid_columnconfigure(0, weight=1)
+#         self.tabview.tab("About the Developer").grid_columnconfigure(0, weight=1)
+#
+#         # create textbox
+#         self.textbox_info = ctk.CTkTextbox(self.tabview.tab("Information about the Game"), width=900)
+#         self.textbox_info.grid(row=0, column=0, padx=20, pady=(20, 10))
+#         self.textbox_info.insert('0.0', """
+#         Countdown is a popular television show game which has been aired since 1982.
+#         The game has three sections: Letters, Numbers and Conundrum.
+#
+#         The letters version provides 9 letters of which the player can choose either 3,4 or 5 vowels
+#         and the remaining letters to be consonants.
+#         From these 9 characters, the aim is to make the longest word possible within the time frame.
+#
+#         The numbers version is similar, the user is prompted to pick the amount of 'big numbers',
+#         with a maximum of 4 and the remaining numbers are 'small numbers'.
+#         Provided with these numbers, a target number is provided and the user's aim is to reach this
+#         target number or as close to as possible within the time frame.
+#
+#         Conundrum, is the final version where a 9 letter anagram is provided and the aim is to find
+#         the 9 letter word from this.
+#         """)
+#
+#         self.textbox_htp = ctk.CTkTextbox(self.tabview.tab("How to Play"), width=250)
+#         self.textbox_htp.grid(row=0, column=0, padx=20, pady=(20, 10))
+#         self.textbox_htp.insert('0.0', 'Hi there')
+#
+#         self.textbox_atd = ctk.CTkTextbox(self.tabview.tab("About the Developer"), width=250)
+#         self.textbox_atd.grid(row=0, column=0, padx=20, pady=(20, 10))
+#         self.textbox_atd.insert('0.0', 'Hi there')
+#
+#         self.login = ctk.CTkButton(self, text="Log in", command=self.log_in)
+#         self.login.grid(row=0, column=2, padx=20, pady=20)
+#
+#         # self.close = ctk.CTkButton(self, text = 'Close', command = self.close)
+#         self.login.grid(row=2, column=2, padx=20, pady=20)
+#         # self.appearance_mode_optionemenu.set("Dark")
+#         # self.scaling_optionemenu.set("100%")
+
+
 class Frame1(ctk.CTkToplevel):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent_app):
+        super().__init__(parent_app)
         self.SidebarFrame = Sidebar(self)
         self.SidebarFrame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.SidebarFrame.grid_rowconfigure(4, weight=1)
