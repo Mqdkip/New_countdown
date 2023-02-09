@@ -55,7 +55,7 @@ class Sidebar(ctk.CTkFrame):
 
 
 class Frame1(ctk.CTkToplevel):
-    def __init__(self, ):
+    def __init__(self):
         super().__init__()
         self.SidebarFrame = Sidebar(self)
         self.SidebarFrame.grid(row=0, column=0, rowspan=4, sticky="nsew")
