@@ -5,7 +5,6 @@ import random
 import tkinter
 from random import randint
 from tkinter import StringVar
-
 import customtkinter as ctk
 
 
@@ -108,13 +107,8 @@ class Tabview(ctk.CTkFrame):
         self.textbox_atd.grid(row=0, column=0, padx=20, pady=(20, 10))
         self.textbox_atd.insert('0.0', 'Hi there')
 
-        # self.login = ctk.CTkButton(self, text="Log in", command=self.log_in)
-        # self.login.grid(row=0, column=2, padx=20, pady=20)
 
-        # self.close = ctk.CTkButton(self, text = 'Close', command = self.close)
-        # self.login.grid(row=2, column=2, padx=20, pady=20)
-        # self.appearance_mode_optionemenu.set("Dark")
-        # self.scaling_optionemenu.set("100%")
+
 
 
 class Numbers_Game(ctk.CTkToplevel):
@@ -128,10 +122,7 @@ class Numbers_Game(ctk.CTkToplevel):
         number_of_big = ctk.CTkInputDialog(text="How many big numbers? [1,2,3,4]", title='Big Numbers')
         nob = number_of_big.get_input()
         nob = int(nob)
-        if 0 < nob < 5:
-            pass
-        else:
-            number_of_big.destroy()
+        if nob < 1 or nob > 4:
             make_numbers_game()
 
         self.title('Numbers Game')
@@ -153,7 +144,6 @@ class Numbers_Game(ctk.CTkToplevel):
             self.score = 0
             big_options = [25, 50, 75, 100]
             small_options = [i for i in range(1, 11)] * 2
-            # small_options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5,Ë 6, 7, 8, 9, 10]
             lob = random.sample(big_options, nob)  # big numbers used in number list
             los = random.sample(small_options, (6 - nob))  # small numbers used in number list
             self.numbers = [*los, *lob]
@@ -161,7 +151,12 @@ class Numbers_Game(ctk.CTkToplevel):
 
         def solutions_list():
             solutions = list()
-            solve(self.target, self.numbers, list(), solutions)
+            pool = multiprocessing.Pool()
+            args = [(self.target, self.numbers, list(), solutions) for _ in range(multiprocessing.cpu_count())]
+            pool.starmap(solve, args)
+            pool.close()
+            pool.join()
+
             unique = list()
             self.final = list()
             for s in solutions:
@@ -169,7 +164,7 @@ class Numbers_Game(ctk.CTkToplevel):
                 if not a in unique:
                     unique.append(a)
                     self.final.append(s)
-            for s in self.final:  # print them out
+            for s in self.final:
                 print(s)
 
             self.best_solution = (min(self.final, key=len))
@@ -181,83 +176,29 @@ class Numbers_Game(ctk.CTkToplevel):
                 return
             distinct = sorted(list(set(numbers)), reverse=True)
             remainder = list(distinct)
-            for n1 in distinct:  # reduce list by combining a pair
+            for n1 in distinct:
                 remainder.remove(n1)
                 for n2 in remainder:
-                    rem2 = list(
-                        numbers)  # in case of duplicates we need to start with full list and take out the n1,n2 pair of elements
+                    rem2 = list(numbers)
                     rem2.remove(n1)
                     rem2.remove(n2)
-                    combine(target, solutions, path, rem2, n1, n2, '+')
-                    combine(target, solutions, path, rem2, n1, n2, '-')
+                    combine(path, rem2, n1, n2, '+', target, solutions)
+                    combine(path, rem2, n1, n2, '-', target, solutions)
                     if n2 > 1:
-                        combine(target, solutions, path, rem2, n1, n2, '*')
+                        combine(path, rem2, n1, n2, '*', target, solutions)
                         if not n1 % n2:
-                            combine(target, solutions, path, rem2, n1, n2, '//')
+                            combine(path, rem2, n1, n2, '//', target, solutions)
 
-        def combine(target, solutions, path, rem2, n1, n2, symb):
-            lst = list(rem2)
-            ans = eval("{0}{2}{1}".format(n1, n2, symb))
-            newpath = path + ["{0}{3}{1}={2}".format(n1, n2, ans, symb[0])]
-            if ans == target:
-                solutions += [newpath]
+        def combine(path, numbers, n1, n2, operator, target, solutions):
+            new_num = eval(f"{n1} {operator} {n2}")
+            new_path = path + [(n1, operator, n2)]
+            if len(numbers) == 0:
+                if new_num == target:
+                    solution = [str(n) if isinstance(n, int) else n for n in new_path]
+                    solutions.append(solution)
             else:
-                lst.append(ans)
-                solve(target, lst, newpath, solutions)
+                solve(target, numbers + [new_num], new_path, solutions)
 
-        #
-        # def solutions_list():
-        #     solutions = list()
-        #     #solve(self.target, self.numbers, list(), solutions)
-        #     pool = multiprocessing.Pool()
-        #     args = [(self.target, self.numbers, list(), solutions) for _ in range(multiprocessing.cpu_count())]
-        #     pool.starmap(solve, args)
-        #
-        #     unique = list()
-        #     self.final = list()
-        #     for s in solutions:
-        #         a = ''.join(sorted(s))
-        #         if not a in unique:
-        #             unique.append(a)
-        #             self.final.append(s)
-        #     for s in self.final:  # print them out
-        #         print(s)
-        #
-        #     self.best_solution = (min(self.final, key=len))
-        #
-        #     print(f"There are a total of {len(self.final)} solutions.")
-        #
-        # def solve(args):
-        #     target, numbers, path, solutions = args
-        #
-        #     if len(numbers) == 1:
-        #         return
-        #     distinct = sorted(list(set(numbers)), reverse=True)
-        #     remainder = list(distinct)
-        #     for n1 in distinct:  # reduce list by combining a pair
-        #         remainder.remove(n1)
-        #         for n2 in remainder:
-        #             rem2 = list(
-        #                 numbers)  # in case of duplicates we need to start with full list and take out the n1,n2 pair of elements
-        #             rem2.remove(n1)
-        #             rem2.remove(n2)
-        #             combine(target, solutions, path, rem2, n1, n2, '+')
-        #             combine(target, solutions, path, rem2, n1, n2, '-')
-        #             if n2 > 1:
-        #                 combine(target, solutions, path, rem2, n1, n2, '*')
-        #                 if not n1 % n2:
-        #                     combine(target, solutions, path, rem2, n1, n2, '//')
-        #
-        #
-        # def combine(target, solutions, path, rem2, n1, n2, symb):
-        #     lst = list(rem2)
-        #     ans = eval("{0}{2}{1}".format(n1, n2, symb))
-        #     newpath = path + ["{0}{3}{1}={2}".format(n1, n2, ans, symb[0])]
-        #     if ans == target:
-        #         solutions += [newpath]
-        #     else:
-        #         lst.append(ans)
-        #         solve_parallel(target, lst, newpath, solutions)
 
         def display_best_solution():
             best_solution_text = ctk.CTkTextbox(self, height=40)
@@ -326,10 +267,7 @@ class Numbers_Game(ctk.CTkToplevel):
             else:
                 print("Number evaluated is too far from target to score any points")
 
-        # Function to clear the contents of text entry box
-        # def clear():
-        #   self.expression = ""
-        #  equation.set("")
+
 
         def operand_press_switch(op):
             press(op)

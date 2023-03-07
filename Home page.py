@@ -53,15 +53,15 @@ class App(ctk.CTk):
             self.play_letters_game.grid(row=3, column=0, padx=20, pady=10)
             self.appearance_mode_label = ctk.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
             self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
-            self.appearance_mode_optionemenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"],
-                                                                 command=self.change_appearance_mode_event)
-            self.appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
+            self.appearance_mode_menu = ctk.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"],
+                                                          command=self.change_appearance_mode_event)
+            self.appearance_mode_menu.grid(row=6, column=0, padx=20, pady=(10, 10))
             self.scaling_label = ctk.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
             self.scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
-            self.scaling_optionemenu = ctk.CTkOptionMenu(self.sidebar_frame,
-                                                         values=["80%", "90%", "100%", "110%", "120%"],
-                                                         command=self.change_scaling_event)
-            self.scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
+            self.scaling_menu = ctk.CTkOptionMenu(self.sidebar_frame,
+                                                  values=["80%", "90%", "100%", "110%", "120%"],
+                                                  command=self.change_scaling_event)
+            self.scaling_menu.grid(row=8, column=0, padx=20, pady=(10, 20))
 
         # create main entry and button
 
@@ -110,8 +110,8 @@ class App(ctk.CTk):
 
             # self.close = ctk.CTkButton(self, text = 'Close', command = self.close)
             self.login.grid(row=2, column=2, padx=20, pady=20)
-            self.appearance_mode_optionemenu.set("Dark")
-            self.scaling_optionemenu.set("100%")
+            self.appearance_mode_menu.set("Dark")
+            self.scaling_menu.set("100%")
 
         sidebar(self)
         tabview(self)
@@ -151,7 +151,7 @@ class App(ctk.CTk):
         gui2.title("Countdown Numbers")
 
         equation = StringVar()  # StringVar() is the variable class we create an instance of this class
-        expression_field = Entry(gui2, textvariable=equation)  # create the text entry box for showing the expression.
+        expression_field = ctk.CTkEntry(gui2, textvariable=equation)  # create the text entry box for showing the expression.
         expression_field.grid(columnspan=4,
                               ipadx=100)  # grid method is used for placing the widgets at respective positions in table like structure.
 

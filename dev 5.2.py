@@ -1,4 +1,7 @@
 # imports
+import datetime
+from tkinter import messagebox
+
 import customtkinter as ctk
 
 
@@ -103,7 +106,23 @@ class Sidebar(ctk.CTkFrame):
 #         self.login.grid(row=2, column=2, padx=20, pady=20)
 #         # self.appearance_mode_optionemenu.set("Dark")
 #         # self.scaling_optionemenu.set("100%")
+class timer(ctk.CTkToplevel):
+    def __init__(self):
+        super().__init__()
+        self.timelabel = ctk.CTkLabel(self, text=f'Score: {self.timer}')
+        self.timelabel.grid(row=0, column=1)
 
+        self.t_seconds = 30
+        def update_gui():
+            timer = datetime.timedelta(seconds=self.t_seconds)
+            timer_string_var.set(timer)
+            self.t_seconds -= 1
+            if (self.t_seconds == 0):
+                messagebox.showinfo("Time Countdown", "Time's up ")
+            self.update()
+            self.after(1000, update_gui)
+
+        self.after(1000, update_gui)
 
 class Frame1(ctk.CTkToplevel):
     def __init__(self, parent_app):
