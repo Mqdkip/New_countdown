@@ -25,9 +25,11 @@ class HomePage(ctk.CTk):
         self.grid_rowconfigure((0, 1, 2), weight=1)
 
 
+
 def make_numbers_game():
     numbers_game = Numbers_Game()
     numbers_game.mainloop()
+
 
 
 
@@ -52,9 +54,9 @@ class Sidebar(ctk.CTkFrame):
             new_scaling_float = int(new_scaling.replace("%", "")) / 100
             ctk.set_widget_scaling(new_scaling_float)
 
-        def set_timer_event(newtime : str):
-            if newtime != "Unlimited":
-                self.temp = int(newtime.replace("S",""))
+        def set_timer_event(temp : str):
+            if temp != "Unlimited":
+                self.temp = int(temp.replace("s",""))
             else:
                 self.temp = -1
 
@@ -75,12 +77,14 @@ class Sidebar(ctk.CTkFrame):
         self.appearance_mode_menu = ctk.CTkOptionMenu(self, values=["Light", "Dark", "System"],
                                                       command=change_appearance_mode_event)
         self.appearance_mode_menu.grid(row=5, column=0, padx=20, pady=(10, 20))
+        self.appearance_mode_menu.set("System")
         self.scaling_label = ctk.CTkLabel(self, text="UI Scaling:", anchor="w")
         self.scaling_label.grid(row=6, column=0, padx=20, pady=(10, 0))
         self.scaling_menu = ctk.CTkOptionMenu(self,
                                               values=["80%", "90%", "100%", "110%", "120%"],
                                               command=change_scaling_event)
         self.scaling_menu.grid(row=7, column=0, padx=20, pady=(10, 20))
+        self.scaling_menu.set("100%")
 
         self.second_label = ctk.CTkLabel(self, text="Timer Length:", anchor="w")
         self.second_label.grid(row=8, column=0, padx=20, pady=(10, 0))
@@ -88,6 +92,7 @@ class Sidebar(ctk.CTkFrame):
                                               values=["30s", "60s", "90s", "Unlimited"],
                                               command=set_timer_event)
         self.second_menu.grid(row=9, column=0, padx=20, pady=(10, 20))
+        self.second_menu.set("30s")
 
 
 
@@ -126,15 +131,21 @@ class Tabview(ctk.CTkFrame):
         the 9 letter word from this.
         """)
 
-        self.textbox_htp = ctk.CTkTextbox(self.tabview.tab("How to Play"), width=250)
+        self.textbox_htp = ctk.CTkTextbox(self.tabview.tab("How to Play"), width = 700 )
         self.textbox_htp.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.textbox_htp.insert('0.0', """First begin by choosing the preferred option between the Letters Game and the Numbers Game.
-        The Numbers Game, will prompt for how many big numbers you want to use then wait for the game to appear.
-        First select the first number you want to use and then choose an operation to follow, continue choosing different numbers and different operations
-        in aim of reaching the target number and once you've gone through all the operations click the equals sign to lock in your answer and evaluate the answer.
+        self.textbox_htp.insert('0.0', """
+        First begin by choosing the preferred option between the Letters Game and the Numbers Game.
         
-        The Letters Game, will prompt for how many vowels you want to use, and the remaining letters will be provided.
-        Make the longest word you can using the 9 letters and input it into the box above, before the timer runs out 
+        The Numbers Game, will prompt for how many big numbers you want to use then wait.
+        First select the first number you want to use and then choose an operation to follow, 
+        continue choosing different numbers and different operations.
+        In aim of reaching the target number and once you've gone through all the operations 
+        click the equals sign to lock in your answer and evaluate the answer.
+        
+        The Letters Game, will prompt for how many vowels you want to use,
+        and the remaining letters will be provided.
+        Make the longest word you can using the 9 letters and input it into the box above,
+        before the timer runs out 
         or when you have reached the longest word you can, submit the word.
         """)
 
@@ -154,7 +165,8 @@ class Tabview(ctk.CTkFrame):
 class Numbers_Game(ctk.CTkToplevel):
     def __init__(self):
         super().__init__()
-        self.score = None
+        self.score = tkinter.IntVar()
+        self.resizable(True, True)
         self.target = None
         self.best_solution = None
         self.numbers = None
@@ -377,7 +389,7 @@ class Numbers_Game(ctk.CTkToplevel):
         brn = -1  # base row number
         bcn = 2
 
-        target_label = ctk.CTkButton(self, text=f"Target is {self.target}", text_color=("red"))
+        target_label = ctk.CTkButton(self, text=f"Target is {self.target}", text_color="red")
         target_label.configure(state="disabled", fg_color='red', text_color_disabled='white')
         target_label.grid(row=brn + 2, column=bcn + 0, padx=10, pady=10)
 
@@ -455,9 +467,10 @@ class Numbers_Game(ctk.CTkToplevel):
 class Letters_Game(ctk.CTkToplevel):
     def __init__(self):
         super().__init__()
+        self.resizable(True, True)
         self.all_possible = []
         self.longest_words = []
-        self.score = None
+        self.score = tkinter.IntVar()
         number_of_vowels = ctk.CTkInputDialog(text="How many Vowels? [3,4,5]", title='Vowels')
         nov = number_of_vowels.get_input()
         nov = int(nov)
@@ -484,7 +497,7 @@ class Letters_Game(ctk.CTkToplevel):
             with open('/usr/share/dict/words', 'r') as f:
                 self.words = f.read().split()
 
-            self.score = 0
+
 
             # Now, we can iterate through the list of words and check if they can be made from the list of letters
             for word in self.words:
@@ -521,6 +534,7 @@ class Letters_Game(ctk.CTkToplevel):
             if self.total in self.all_possible:
                 self.score += len(self.total)
                 print(self.score)
+                self.score.set(self)
 
             if buttonc["state"] == "normal":
                 buttonc.configure(state="disabled")
@@ -582,9 +596,11 @@ class Letters_Game(ctk.CTkToplevel):
         entry.grid(row=0, column=2)
 
         best_words = ctk.CTkButton(self, text='Display best words', command=display_best_words)
+        best_words.configure(fg_color='red')
         best_words.grid(row=3, column=1)
 
         all_words = ctk.CTkButton(self, text='Display all words', command=display_all_words)
+        all_words.configure(fg_color='red')
         all_words.grid(row=3, column=3)
 
         score_label = ctk.CTkLabel(self, text=f'Score: {self.score}')
@@ -594,8 +610,7 @@ class Letters_Game(ctk.CTkToplevel):
 
 
 class Timer(ctk.CTkToplevel):
-    def __init__(self, parent_app):
-        self.temp = newtime
+    def __init__(self):
         self.title("Time Counter")
         self.geometry("300x250")
         self.time = ctk.CTkLabel(self, text="")
@@ -628,7 +643,6 @@ class Timer(ctk.CTkToplevel):
 
 
 if __name__ == "__main__":
-    make_timer()
     page = HomePage()
     page.mainloop()
 
