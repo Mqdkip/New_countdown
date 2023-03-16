@@ -1,4 +1,5 @@
 # imports
+# todo get timer to work, maybe take it out into a different file but just make sure a timer exists full stop.
 import functools
 from time import sleep
 import random
@@ -25,22 +26,19 @@ class HomePage(ctk.CTk):
         self.grid_rowconfigure((0, 1, 2), weight=1)
 
 
-
 def make_numbers_game():
     numbers_game = Numbers_Game()
     numbers_game.mainloop()
-
-
 
 
 def make_letters_game():
     letters_game = Letters_Game()
     letters_game.mainloop()
 
+
 def make_timer():
     timer = Timer()
     timer.mainloop()
-    print('pop')
 
 
 class Sidebar(ctk.CTkFrame):
@@ -54,9 +52,9 @@ class Sidebar(ctk.CTkFrame):
             new_scaling_float = int(new_scaling.replace("%", "")) / 100
             ctk.set_widget_scaling(new_scaling_float)
 
-        def set_timer_event(temp : str):
+        def set_timer_event(temp: str):
             if temp != "Unlimited":
-                self.temp = int(temp.replace("s",""))
+                self.temp = int(temp.replace("s", ""))
             else:
                 self.temp = -1
 
@@ -73,7 +71,7 @@ class Sidebar(ctk.CTkFrame):
         self.play_letters_game = ctk.CTkButton(self, text='Letters Game', command=make_letters_game)
         self.play_letters_game.grid(row=3, column=0, padx=20, pady=10)
         self.appearance_mode_label = ctk.CTkLabel(self, text="Appearance Mode:", anchor="w")
-        self.appearance_mode_label.grid(row=4, column=0, padx=20, pady=(10,20))
+        self.appearance_mode_label.grid(row=4, column=0, padx=20, pady=(10, 20))
         self.appearance_mode_menu = ctk.CTkOptionMenu(self, values=["Light", "Dark", "System"],
                                                       command=change_appearance_mode_event)
         self.appearance_mode_menu.grid(row=5, column=0, padx=20, pady=(10, 20))
@@ -89,11 +87,10 @@ class Sidebar(ctk.CTkFrame):
         self.second_label = ctk.CTkLabel(self, text="Timer Length:", anchor="w")
         self.second_label.grid(row=8, column=0, padx=20, pady=(10, 0))
         self.second_menu = ctk.CTkOptionMenu(self,
-                                              values=["30s", "60s", "90s", "Unlimited"],
-                                              command=set_timer_event)
+                                             values=["30s", "60s", "90s", "Unlimited"],
+                                             command=set_timer_event)
         self.second_menu.grid(row=9, column=0, padx=20, pady=(10, 20))
         self.second_menu.set("30s")
-
 
 
 class Tabview(ctk.CTkFrame):
@@ -131,7 +128,7 @@ class Tabview(ctk.CTkFrame):
         the 9 letter word from this.
         """)
 
-        self.textbox_htp = ctk.CTkTextbox(self.tabview.tab("How to Play"), width = 700 )
+        self.textbox_htp = ctk.CTkTextbox(self.tabview.tab("How to Play"), width=700)
         self.textbox_htp.grid(row=0, column=0, padx=20, pady=(20, 10))
         self.textbox_htp.insert('0.0', """
         First begin by choosing the preferred option between the Letters Game and the Numbers Game.
@@ -149,17 +146,13 @@ class Tabview(ctk.CTkFrame):
         or when you have reached the longest word you can, submit the word.
         """)
 
-        self.textbox_atd = ctk.CTkTextbox(self.tabview.tab("About the Developer"), width=250)
+        self.textbox_atd = ctk.CTkTextbox(self.tabview.tab("About the Developer"), width=700)
         self.textbox_atd.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.textbox_atd.insert('0.0', 'Hi there')
-
-        # self.login = ctk.CTkButton(self, text="Log in", command=self.log_in)
-        # self.login.grid(row=0, column=2, padx=20, pady=20)
-
-        # self.close = ctk.CTkButton(self, text = 'Close', command = self.close)
-        # self.login.grid(row=2, column=2, padx=20, pady=20)
-        # self.appearance_mode_optionemenu.set("Dark")
-        # self.scaling_optionemenu.set("100%")
+        self.textbox_atd.insert('0.0', """
+        My name is Reza Pirbhai, and this project is being made for my OCR Computer Science Coursework.
+        I chose to code Countdown due to my love of the game, and the show 8 out of 10 cats play countdown
+        being one of my favourite TV shows of all time. 
+        """)
 
 
 class Numbers_Game(ctk.CTkToplevel):
@@ -196,7 +189,7 @@ class Numbers_Game(ctk.CTkToplevel):
 
         # Making the big number and developing all possible solutions
         def making():
-            self.score = 0
+
             big_options = [25, 50, 75, 100]
             small_options = [i for i in range(1, 11)] * 2
             # small_options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5,Ë 6, 7, 8, 9, 10]
@@ -204,6 +197,8 @@ class Numbers_Game(ctk.CTkToplevel):
             los = random.sample(small_options, (6 - nob))  # small numbers used in number list
             self.numbers = [*los, *lob]
             self.target = randint(100, 999)
+
+
 
         def solutions_list():
             solutions = list()
@@ -250,60 +245,6 @@ class Numbers_Game(ctk.CTkToplevel):
             else:
                 lst.append(ans)
                 solve(target, lst, newpath, solutions)
-
-        #
-        # def solutions_list():
-        #     solutions = list()
-        #     #solve(self.target, self.numbers, list(), solutions)
-        #     pool = multiprocessing.Pool()
-        #     args = [(self.target, self.numbers, list(), solutions) for _ in range(multiprocessing.cpu_count())]
-        #     pool.starmap(solve, args)
-        #
-        #     unique = list()
-        #     self.final = list()
-        #     for s in solutions:
-        #         a = ''.join(sorted(s))
-        #         if not a in unique:
-        #             unique.append(a)
-        #             self.final.append(s)
-        #     for s in self.final:  # print them out
-        #         print(s)
-        #
-        #     self.best_solution = (min(self.final, key=len))
-        #
-        #     print(f"There are a total of {len(self.final)} solutions.")
-        #
-        # def solve(args):
-        #     target, numbers, path, solutions = args
-        #
-        #     if len(numbers) == 1:
-        #         return
-        #     distinct = sorted(list(set(numbers)), reverse=True)
-        #     remainder = list(distinct)
-        #     for n1 in distinct:  # reduce list by combining a pair
-        #         remainder.remove(n1)
-        #         for n2 in remainder:
-        #             rem2 = list(
-        #                 numbers)  # in case of duplicates we need to start with full list and take out the n1,n2 pair of elements
-        #             rem2.remove(n1)
-        #             rem2.remove(n2)
-        #             combine(target, solutions, path, rem2, n1, n2, '+')
-        #             combine(target, solutions, path, rem2, n1, n2, '-')
-        #             if n2 > 1:
-        #                 combine(target, solutions, path, rem2, n1, n2, '*')
-        #                 if not n1 % n2:
-        #                     combine(target, solutions, path, rem2, n1, n2, '//')
-        #
-        #
-        # def combine(target, solutions, path, rem2, n1, n2, symb):
-        #     lst = list(rem2)
-        #     ans = eval("{0}{2}{1}".format(n1, n2, symb))
-        #     newpath = path + ["{0}{3}{1}={2}".format(n1, n2, ans, symb[0])]
-        #     if ans == target:
-        #         solutions += [newpath]
-        #     else:
-        #         lst.append(ans)
-        #         solve_parallel(target, lst, newpath, solutions)
 
         def display_best_solution():
             best_solution_text = ctk.CTkTextbox(self, height=40)
@@ -360,30 +301,30 @@ class Numbers_Game(ctk.CTkToplevel):
             # if error is generate then handle by the except block
             except:
                 self.equation.set(" error ")
-                expression = ""
 
             difference = abs(self.target - float(self.total))
             if difference == 0:
-                self.score += 10
-                print(self.score)
-            elif difference < 10:
-                self.score += 10 - difference
-                print(self.score)
+                self.score.set(self.score.get() + 10)
+                score_label.configure(text=f'Score: {self.score.get()}')
+                print(self.score.get())
+            elif 0 < difference < 6:
+                self.score.set(self.score.get() + 7)
+                score_label.configure(text=f'Score: {self.score.get()}')
+                print(self.score.get())
+            elif 6 <= difference <= 10:
+                self.score.set(self.score.get() + 5)
+                score_label.configure(text=f'Score: {self.score.get()}')
+                print(self.score.get())
             else:
                 print("Number evaluated is too far from target to score any points")
-
-        # Function to clear the contents of text entry box
-        # def clear():
-        #   self.expression = ""
-        #  equation.set("")
 
         def operand_press_switch(op):
             press(op)
             switch()
 
-        def remember():
-            if not button1.winfo_viewable():
-                button1.grid()
+        # def remember():
+        #     if not button1.winfo_viewable():
+        #         button1.grid()
 
         making()
         brn = -1  # base row number
@@ -442,9 +383,9 @@ class Numbers_Game(ctk.CTkToplevel):
         # clear = ctk.CTkButton(self, text='Clear', command=clear)
         # clear.grid(row=brn + 5, column='0', padx=10, pady=10)
 
-        undo_button = ctk.CTkButton(self, text='Undo', font=('arial', 20, 'bold'))
-        undo_button.configure(command=remember())
-        undo_button.grid(row=brn + 6, column=bcn + 0)
+        # undo_button = ctk.CTkButton(self, text='Undo', font=('arial', 20, 'bold'))
+        # undo_button.configure(command=remember())
+        # undo_button.grid(row=brn + 6, column=bcn + 0)
 
         Lbracket = ctk.CTkButton(self, text='(', command=lambda: press('('))
         Lbracket.grid(row=brn + 5, column=bcn + 1)
@@ -455,12 +396,15 @@ class Numbers_Game(ctk.CTkToplevel):
         best_solutions = ctk.CTkButton(self, text='Display best solutions', command=display_best_solution)
         best_solutions.grid(row=brn + 7, column=bcn + 0)
 
-        timer_string_var = ctk.StringVar(self)
-        time_b = ctk.CTkButton(self, textvariable=timer_string_var)
-        time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
-        time_b.grid(row=brn + 2, column=bcn + 1)
+        score_label = ctk.CTkLabel(self, text=f'Score: {self.score.get()}')
+        score_label.grid(row=brn + 2, column=bcn + 1)
 
+        # timer_string_var = ctk.StringVar(self)
+        # time_b = ctk.CTkButton(self, textvariable=timer_string_var)
+        # time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
+        # time_b.grid(row=brn + 2, column=bcn + 1)
         t_seconds = 3
+
         solutions_list()
 
 
@@ -492,12 +436,11 @@ class Letters_Game(ctk.CTkToplevel):
                                   k=number_of_consonants)
             self.letters = [ops.lower() for ops in [*vow, *cons]]
 
+
             # self.all_possible = []
             # Next, let's define a list of words that we want to check
             with open('/usr/share/dict/words', 'r') as f:
                 self.words = f.read().split()
-
-
 
             # Now, we can iterate through the list of words and check if they can be made from the list of letters
             for word in self.words:
@@ -530,11 +473,16 @@ class Letters_Game(ctk.CTkToplevel):
 
         def submitpress():
             self.total = entry.get()
-            print(self.total)
+            self.total = self.total.lower()
+
             if self.total in self.all_possible:
-                self.score += len(self.total)
-                print(self.score)
-                self.score.set(self)
+                if len(self.total) == 9:
+                    self.score.set(
+                        self.score.get() + 18)  # 18 comes from wikipedia ruleset, and stating that if all 9 letters are used, the contestant scores 18 points.
+                    score_label.configure(text=f'Score: {self.score.get()}')
+                else:
+                    self.score.set(self.score.get() + len(self.total))
+                    score_label.configure(text=f'Score: {self.score.get()}')
 
             if buttonc["state"] == "normal":
                 buttonc.configure(state="disabled")
@@ -603,7 +551,7 @@ class Letters_Game(ctk.CTkToplevel):
         all_words.configure(fg_color='red')
         all_words.grid(row=3, column=3)
 
-        score_label = ctk.CTkLabel(self, text=f'Score: {self.score}')
+        score_label = ctk.CTkLabel(self, text=f'Score: {self.score.get()}')
         score_label.grid(row=0, column=1)
 
         buttonc = tkinter.Button(self, text=f'Constant button')
@@ -620,29 +568,21 @@ class Timer(ctk.CTkToplevel):
         secondLabel.place(x=130, y=30)
 
         while self.temp > -1:
-
             # divmod(firstvalue = temp//60, secondvalue = temp%60)
-
             second.set("{0:2d}".format(self.temp))
-
             # updating the GUI window after decrementing the
             # temp value every time
             self.update()
             sleep(1)
-
             # when temp value = 0; then a messagebox pop's up
             # with a message:"Time's up"
             if (self.temp == 0):
                 messagebox.showinfo("Time Countdown", "Time's up ")
-
             # after every one sec the value of temp will be decremented
             # by one
             self.temp -= 1
 
 
-
-
 if __name__ == "__main__":
     page = HomePage()
     page.mainloop()
-
