@@ -244,6 +244,7 @@ def update_gui2():
     gui2.update()
     gui2.after(1000, update_gui2)
 
+solutions_list()
 gui2.after(1000, update_gui2)
 
 

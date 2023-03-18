@@ -1,7 +1,7 @@
 # imports
 # todo get timer to work, maybe take it out into a different file but just make sure a timer exists full stop.
+import datetime
 import functools
-from time import sleep
 import random
 import tkinter
 from random import randint
@@ -9,11 +9,13 @@ from tkinter import StringVar, messagebox, IntVar
 import customtkinter as ctk
 
 
+
+
 class HomePage(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title('Countdown Home Page')
-        self.geometry(f"{1100}x{580}")
+        self.geometry(f"{1100}x{450}")
         self.resizable(True, True)
         self.sidebar_frame = Sidebar(self)
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
@@ -25,21 +27,14 @@ class HomePage(ctk.CTk):
         self.grid_columnconfigure((2, 3), weight=0)
         self.grid_rowconfigure((0, 1, 2), weight=1)
 
-
 def make_numbers_game():
-    numbers_game = Numbers_Game()
+    numbers_game = NumbersGame()
     numbers_game.mainloop()
 
 
 def make_letters_game():
-    letters_game = Letters_Game()
+    letters_game = LettersGame()
     letters_game.mainloop()
-
-
-def make_timer():
-    timer = Timer()
-    timer.mainloop()
-
 
 class Sidebar(ctk.CTkFrame):
     def __init__(self, parent_app):
@@ -52,26 +47,18 @@ class Sidebar(ctk.CTkFrame):
             new_scaling_float = int(new_scaling.replace("%", "")) / 100
             ctk.set_widget_scaling(new_scaling_float)
 
-        def set_timer_event(temp: str):
-            if temp != "Unlimited":
-                self.temp = int(temp.replace("s", ""))
-            else:
-                self.temp = -1
-
         self.sidebar_button_event = None
 
         self.parent_app = parent_app
         # create sidebar frame with widgets
         self.logo_label = ctk.CTkLabel(self, text="Countdown", font=ctk.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.sidebar_button_1 = ctk.CTkButton(self, text='Home', command=self.sidebar_button_event)
-        self.sidebar_button_1.grid(row=1, column=0, padx=20, pady=10)
         self.play_numbers_game = ctk.CTkButton(self, text='Numbers Game', command=make_numbers_game)
         self.play_numbers_game.grid(row=2, column=0, padx=20, pady=10)
         self.play_letters_game = ctk.CTkButton(self, text='Letters Game', command=make_letters_game)
         self.play_letters_game.grid(row=3, column=0, padx=20, pady=10)
         self.appearance_mode_label = ctk.CTkLabel(self, text="Appearance Mode:", anchor="w")
-        self.appearance_mode_label.grid(row=4, column=0, padx=20, pady=(10, 20))
+        self.appearance_mode_label.grid(row=4, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_menu = ctk.CTkOptionMenu(self, values=["Light", "Dark", "System"],
                                                       command=change_appearance_mode_event)
         self.appearance_mode_menu.grid(row=5, column=0, padx=20, pady=(10, 20))
@@ -83,14 +70,6 @@ class Sidebar(ctk.CTkFrame):
                                               command=change_scaling_event)
         self.scaling_menu.grid(row=7, column=0, padx=20, pady=(10, 20))
         self.scaling_menu.set("100%")
-
-        self.second_label = ctk.CTkLabel(self, text="Timer Length:", anchor="w")
-        self.second_label.grid(row=8, column=0, padx=20, pady=(10, 0))
-        self.second_menu = ctk.CTkOptionMenu(self,
-                                             values=["30s", "60s", "90s", "Unlimited"],
-                                             command=set_timer_event)
-        self.second_menu.grid(row=9, column=0, padx=20, pady=(10, 20))
-        self.second_menu.set("30s")
 
 
 class Tabview(ctk.CTkFrame):
@@ -131,11 +110,11 @@ class Tabview(ctk.CTkFrame):
         self.textbox_atd.configure(state="disabled")
 
 
-class Numbers_Game(ctk.CTkToplevel):
+class NumbersGame(ctk.CTkToplevel):
     def __init__(self):
         super().__init__()
+        # self.temp = Sidebar.temp()
         self.score = IntVar()
-        self.resizable(True, True)
         self.target = None
         self.best_solution = None
         self.numbers = None
@@ -146,14 +125,17 @@ class Numbers_Game(ctk.CTkToplevel):
         if nob.isdigit():
             nob = int(nob)
             if 0 < nob < 5:
-                pass
+                user_time = ctk.CTkInputDialog(text="How long do you want the timer set for?", title='Time selection')
+                time = user_time.get_input()
+                if time.isdigit():
+                    time = int(time)
+
             else:
                 ctk.CTkInputDialog.destroy(self)
                 make_numbers_game()
         else:
             ctk.CTkInputDialog.destroy(self)
             make_numbers_game()
-
 
         self.title('Numbers Game')
         self.SidebarFrame = Sidebar(self)
@@ -166,7 +148,7 @@ class Numbers_Game(ctk.CTkToplevel):
         # expression.
         self.expression_field.grid(row=0, column=2, columnspan=4,
                                    ipadx=100)  # grid method is used for placing the widgets at respective positions
-        self.expression_field.configure(state = "disabled")
+        self.expression_field.configure(state="disabled")
 
         # in table like structure.
 
@@ -228,7 +210,7 @@ class Numbers_Game(ctk.CTkToplevel):
                 solve(target, lst, newpath, solutions)
 
         def display_best_solution():
-            best_solution_text = ctk.CTkTextbox(self, height=40, width=600)
+            best_solution_text = ctk.CTkTextbox(self, height=40, width=200)
             best_solution_text.grid(row=brn + 7, column=3, padx=20, pady=(20, 10))
             best_solution_text.insert('0.0', f'{self.best_solution}')
             best_solution_text.configure(state="disabled")
@@ -384,21 +366,33 @@ class Numbers_Game(ctk.CTkToplevel):
         best_solutions.grid(row=brn + 7, column=bcn + 0)
 
         score_label = ctk.CTkLabel(self, text=f'Score: {self.score.get()}')
-        score_label.grid(row=brn + 2, column=bcn + 1)
+        score_label.grid(row=brn + 2, column=bcn + 2)
 
-        # timer_string_var = ctk.StringVar(self)
-        # time_b = ctk.CTkButton(self, textvariable=timer_string_var)
-        # time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
-        # time_b.grid(row=brn + 2, column=bcn + 1)
-        t_seconds = 3
+        timer_string_var = ctk.StringVar(self)
+        time_b = ctk.CTkButton(self, textvariable=timer_string_var)
+        time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
+        time_b.grid(row=brn + 2, column=bcn + 1)
+
+        self.t_seconds = time
+
+        def update_gui2():
+            timer = datetime.timedelta(seconds=self.t_seconds)
+            timer_string_var.set(timer)
+            self.t_seconds -= 1
+            if self.t_seconds == 0:
+                messagebox.showinfo("Time Countdown", "Time's up ")
+                ctk.CTkToplevel.configure(self, state="disabled")
+            self.update()
+            self.after(1000, update_gui2)
 
         solutions_list()
+        update_gui2()
 
 
-class Letters_Game(ctk.CTkToplevel):
+class LettersGame(ctk.CTkToplevel):
     def __init__(self):
         super().__init__()
-        self.resizable(True, True)
+
         self.all_possible = []
         self.longest_words = []
         self.score = IntVar()
@@ -407,7 +401,11 @@ class Letters_Game(ctk.CTkToplevel):
         if nov.isdigit():
             nov = int(nov)
             if 2 < nov < 6:
-                pass
+                user_time = ctk.CTkInputDialog(text="How long do you want the timer set for?", title='Time selection')
+                time = user_time.get_input()
+                if time.isdigit():
+                    time = int(time)
+
             else:
                 ctk.CTkInputDialog.destroy(self)
                 make_letters_game()
@@ -533,7 +531,7 @@ class Letters_Game(ctk.CTkToplevel):
         letter8.grid(row=2, column=bcn + 4)
 
         submit = ctk.CTkButton(self, text=' Submit ', command=submitpress)
-        submit.grid(row=0, column=4)
+        submit.grid(row=0, column=3)
 
         entry = ctk.CTkEntry(self, width=200)
         entry.grid(row=0, column=2)
@@ -551,31 +549,26 @@ class Letters_Game(ctk.CTkToplevel):
 
         buttonc = tkinter.Button(self, text=f'Constant button')
 
+        timer_string_var = ctk.StringVar(self)
+        time_b = ctk.CTkButton(self, textvariable=timer_string_var)
+        time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
+        time_b.grid(row=0, column=4)
 
-class Timer(ctk.CTkToplevel):
-    def __init__(self):
-        self.title("Time Counter")
-        self.geometry("300x250")
-        self.time = ctk.CTkLabel(self, text="")
-        second = StringVar()
-        second.set("00")
-        secondLabel = ctk.CTkLabel(self, width=5, font=('Arial', 18), textvariable=second)
-        secondLabel.place(x=130, y=30)
+        self.t_seconds = time
 
-        while self.temp > -1:
-            # divmod(firstvalue = temp//60, secondvalue = temp%60)
-            second.set("{0:2d}".format(self.temp))
-            # updating the GUI window after decrementing the
-            # temp value every time
+        def update_gui():
+            timer = datetime.timedelta(seconds=self.t_seconds)
+            timer_string_var.set(timer)
+            self.t_seconds -= 1
+            if self.t_seconds == 0:
+                messagebox.showinfo("Time Countdown", """Time's up!
+                You can continue playing this round, but for practise sake, you may continue.
+                 """)
+                ctk.CTkToplevel.configure(self, state="disabled")
             self.update()
-            sleep(1)
-            # when temp value = 0; then a messagebox pop's up
-            # with a message:"Time's up"
-            if (self.temp == 0):
-                messagebox.showinfo("Time Countdown", "Time's up ")
-            # after every one sec the value of temp will be decremented
-            # by one
-            self.temp -= 1
+            self.after(1000, update_gui)
+
+        update_gui()
 
 
 if __name__ == "__main__":
