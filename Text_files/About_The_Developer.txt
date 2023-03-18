@@ -1,0 +1,3 @@
+ My name is Reza Pirbhai, and this project is being made for my OCR Computer Science Coursework.
+ I chose to code Countdown due to my love of the game, and the show 8 out of 10 cats play countdown
+ being one of my favourite TV shows of all time.

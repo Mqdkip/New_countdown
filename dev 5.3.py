@@ -5,7 +5,7 @@ from time import sleep
 import random
 import tkinter
 from random import randint
-from tkinter import StringVar, messagebox
+from tkinter import StringVar, messagebox, IntVar
 import customtkinter as ctk
 
 
@@ -111,54 +111,30 @@ class Tabview(ctk.CTkFrame):
         # create textbox
         self.textbox_info = ctk.CTkTextbox(self.tabview.tab("Information about the Game"), width=700)
         self.textbox_info.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.textbox_info.insert('0.0', """
-        Countdown is a popular television show game which has been aired since 1982.
-        The game has three sections: Letters, Numbers and Conundrum.
-
-        The letters version provides 9 letters of which the player can choose either 3,4 or 5 vowels
-        and the remaining letters to be consonants.
-        From these 9 characters, the aim is to make the longest word possible within the time frame.
-
-        The numbers version is similar, the user is prompted to pick the amount of 'big numbers',
-        with a maximum of 4 and the remaining numbers are 'small numbers'.
-        Provided with these numbers, a target number is provided and the user's aim is to reach this
-        target number or as close to as possible within the time frame.
-
-        Conundrum, is the final version where a 9 letter anagram is provided and the aim is to find
-        the 9 letter word from this.
-        """)
+        with open("Text_files/Information.txt") as file:
+            file_contents = file.read()
+            self.textbox_info.insert('0.0', file_contents)
+        self.textbox_info.configure(state="disabled")
 
         self.textbox_htp = ctk.CTkTextbox(self.tabview.tab("How to Play"), width=700)
         self.textbox_htp.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.textbox_htp.insert('0.0', """
-        First begin by choosing the preferred option between the Letters Game and the Numbers Game.
-        
-        The Numbers Game, will prompt for how many big numbers you want to use then wait.
-        First select the first number you want to use and then choose an operation to follow, 
-        continue choosing different numbers and different operations.
-        In aim of reaching the target number and once you've gone through all the operations 
-        click the equals sign to lock in your answer and evaluate the answer.
-        
-        The Letters Game, will prompt for how many vowels you want to use,
-        and the remaining letters will be provided.
-        Make the longest word you can using the 9 letters and input it into the box above,
-        before the timer runs out 
-        or when you have reached the longest word you can, submit the word.
-        """)
+        with open("Text_files/How_To_Play.txt") as file:
+            file_contents = file.read()
+            self.textbox_htp.insert('0.0', file_contents)
+        self.textbox_htp.configure(state="disabled")
 
         self.textbox_atd = ctk.CTkTextbox(self.tabview.tab("About the Developer"), width=700)
         self.textbox_atd.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.textbox_atd.insert('0.0', """
-        My name is Reza Pirbhai, and this project is being made for my OCR Computer Science Coursework.
-        I chose to code Countdown due to my love of the game, and the show 8 out of 10 cats play countdown
-        being one of my favourite TV shows of all time. 
-        """)
+        with open("Text_files/About_The_Developer.txt") as file:
+            file_contents = file.read()
+            self.textbox_atd.insert('0.0', file_contents)
+        self.textbox_atd.configure(state="disabled")
 
 
 class Numbers_Game(ctk.CTkToplevel):
     def __init__(self):
         super().__init__()
-        self.score = tkinter.IntVar()
+        self.score = IntVar()
         self.resizable(True, True)
         self.target = None
         self.best_solution = None
@@ -166,12 +142,18 @@ class Numbers_Game(ctk.CTkToplevel):
         self.equation = None
         number_of_big = ctk.CTkInputDialog(text="How many big numbers? [1,2,3,4]", title='Big Numbers')
         nob = number_of_big.get_input()
-        nob = int(nob)
-        if 0 < nob < 5:
-            pass
+
+        if nob.isdigit():
+            nob = int(nob)
+            if 0 < nob < 5:
+                pass
+            else:
+                ctk.CTkInputDialog.destroy(self)
+                make_numbers_game()
         else:
-            number_of_big.destroy()
+            ctk.CTkInputDialog.destroy(self)
             make_numbers_game()
+
 
         self.title('Numbers Game')
         self.SidebarFrame = Sidebar(self)
@@ -184,6 +166,7 @@ class Numbers_Game(ctk.CTkToplevel):
         # expression.
         self.expression_field.grid(row=0, column=2, columnspan=4,
                                    ipadx=100)  # grid method is used for placing the widgets at respective positions
+        self.expression_field.configure(state = "disabled")
 
         # in table like structure.
 
@@ -197,8 +180,6 @@ class Numbers_Game(ctk.CTkToplevel):
             los = random.sample(small_options, (6 - nob))  # small numbers used in number list
             self.numbers = [*los, *lob]
             self.target = randint(100, 999)
-
-
 
         def solutions_list():
             solutions = list()
@@ -247,9 +228,10 @@ class Numbers_Game(ctk.CTkToplevel):
                 solve(target, lst, newpath, solutions)
 
         def display_best_solution():
-            best_solution_text = ctk.CTkTextbox(self, height=40)
+            best_solution_text = ctk.CTkTextbox(self, height=40, width=600)
             best_solution_text.grid(row=brn + 7, column=3, padx=20, pady=(20, 10))
             best_solution_text.insert('0.0', f'{self.best_solution}')
+            best_solution_text.configure(state="disabled")
 
         def switch():
             if buttonc["state"] == "normal":
@@ -377,6 +359,11 @@ class Numbers_Game(ctk.CTkToplevel):
         divide.configure(command=functools.partial(operand_press_switch, '/'))
         divide.grid(row=brn + 6, column=bcn + 3)
 
+        plus.configure(state="disabled")
+        minus.configure(state="disabled")
+        multiply.configure(state="disabled")
+        divide.configure(state="disabled")
+
         equal = ctk.CTkButton(self, text=' = ', command=equalpress)
         equal.grid(row=brn + 6, column=bcn + 2, padx=10, pady=10)
 
@@ -393,7 +380,7 @@ class Numbers_Game(ctk.CTkToplevel):
         Rbracket = ctk.CTkButton(self, text=')', command=lambda: press(')'))
         Rbracket.grid(row=brn + 5, column=bcn + 2)
 
-        best_solutions = ctk.CTkButton(self, text='Display best solutions', command=display_best_solution)
+        best_solutions = ctk.CTkButton(self, text='Display best solution', command=display_best_solution)
         best_solutions.grid(row=brn + 7, column=bcn + 0)
 
         score_label = ctk.CTkLabel(self, text=f'Score: {self.score.get()}')
@@ -414,12 +401,20 @@ class Letters_Game(ctk.CTkToplevel):
         self.resizable(True, True)
         self.all_possible = []
         self.longest_words = []
-        self.score = tkinter.IntVar()
+        self.score = IntVar()
         number_of_vowels = ctk.CTkInputDialog(text="How many Vowels? [3,4,5]", title='Vowels')
         nov = number_of_vowels.get_input()
-        nov = int(nov)
-        if nov < 3 or nov > 5:
+        if nov.isdigit():
+            nov = int(nov)
+            if 2 < nov < 6:
+                pass
+            else:
+                ctk.CTkInputDialog.destroy(self)
+                make_letters_game()
+        else:
+            ctk.CTkInputDialog.destroy(self)
             make_letters_game()
+
         self.title('Letters Game')
         self.Sidebarframe = Sidebar(self)
         self.Sidebarframe.grid(row=0, column=0, rowspan=4, sticky="nsew")
@@ -436,8 +431,6 @@ class Letters_Game(ctk.CTkToplevel):
                                   k=number_of_consonants)
             self.letters = [ops.lower() for ops in [*vow, *cons]]
 
-
-            # self.all_possible = []
             # Next, let's define a list of words that we want to check
             with open('/usr/share/dict/words', 'r') as f:
                 self.words = f.read().split()
@@ -492,48 +485,50 @@ class Letters_Game(ctk.CTkToplevel):
             best_words_text = ctk.CTkTextbox(self, height=40)
             best_words_text.grid(row=3, column=2, padx=20, pady=(20, 10))
             best_words_text.insert('0.0', f'{self.longest_words}')
+            best_words_text.configure(state="disabled")
 
         def display_all_words():
             all_words_text = ctk.CTkTextbox(self, height=40)
             all_words_text.grid(row=3, column=4, padx=20, pady=(20, 10))
             all_words_text.insert('0.0', f'{self.all_possible}')
+            all_words_text.configure(state="disabled")
 
         making_letters()
         bcn = 1  # Base column number
 
-        letter0 = ctk.CTkButton(self, text=f' {self.letters[0]} ', font=('arial', 20, 'bold'))
+        letter0 = ctk.CTkButton(self, text=f' {self.letters[0].upper()} ', font=('arial', 20, 'bold'))
         letter0.configure(state="disabled")
         letter0.grid(row=1, column=bcn, padx=20, pady=5)
 
-        letter1 = ctk.CTkButton(self, text=f' {self.letters[1]} ', font=('arial', 20, 'bold'))
+        letter1 = ctk.CTkButton(self, text=f' {self.letters[1].upper()} ', font=('arial', 20, 'bold'))
         letter1.configure(state="disabled")
         letter1.grid(row=1, column=bcn + 1, padx=20, pady=5)
 
-        letter2 = ctk.CTkButton(self, text=f' {self.letters[2]} ', font=('arial', 20, 'bold'))
+        letter2 = ctk.CTkButton(self, text=f' {self.letters[2].upper()} ', font=('arial', 20, 'bold'))
         letter2.configure(state="disabled")
         letter2.grid(row=1, column=bcn + 3, padx=20, pady=5)
 
-        letter3 = ctk.CTkButton(self, text=f' {self.letters[3]} ', font=('arial', 20, 'bold'))
+        letter3 = ctk.CTkButton(self, text=f' {self.letters[3].upper()} ', font=('arial', 20, 'bold'))
         letter3.configure(state="disabled")
         letter3.grid(row=1, column=bcn + 4, padx=20, pady=5)
 
-        letter4 = ctk.CTkButton(self, text=f' {self.letters[4]} ', font=('arial', 20, 'bold'))
+        letter4 = ctk.CTkButton(self, text=f' {self.letters[4].upper()} ', font=('arial', 20, 'bold'))
         letter4.configure(state="disabled")
         letter4.grid(row=2, column=bcn + 0, padx=20, pady=5)
 
-        letter5 = ctk.CTkButton(self, text=f' {self.letters[5]} ', font=('arial', 20, 'bold'))
+        letter5 = ctk.CTkButton(self, text=f' {self.letters[5].upper()} ', font=('arial', 20, 'bold'))
         letter5.configure(state="disabled")
         letter5.grid(row=2, column=bcn + 1, padx=20, pady=5)
 
-        letter6 = ctk.CTkButton(self, text=f' {self.letters[6]} ', font=('arial', 20, 'bold'))
+        letter6 = ctk.CTkButton(self, text=f' {self.letters[6].upper()} ', font=('arial', 20, 'bold'))
         letter6.configure(state="disabled")
         letter6.grid(row=2, column=bcn + 2)
 
-        letter7 = ctk.CTkButton(self, text=f' {self.letters[7]} ', font=('arial', 20, 'bold'))
+        letter7 = ctk.CTkButton(self, text=f' {self.letters[7].upper()} ', font=('arial', 20, 'bold'))
         letter7.configure(state="disabled")
         letter7.grid(row=2, column=bcn + 3)
 
-        letter8 = ctk.CTkButton(self, text=f' {self.letters[8]} ', font=('arial', 20, 'bold'))
+        letter8 = ctk.CTkButton(self, text=f' {self.letters[8].upper()} ', font=('arial', 20, 'bold'))
         letter8.configure(state="disabled")
         letter8.grid(row=2, column=bcn + 4)
 

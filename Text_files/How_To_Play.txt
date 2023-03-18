@@ -1,0 +1,13 @@
+First begin by choosing the preferred option between the Letters Game and the Numbers Game.
+
+The Numbers Game, will prompt for how many big numbers you want to use then wait.
+Click the first number you want to use, afterwards this number will be deleted,
+signifying that you cannot use it again.
+Then choose an operation to use and repeat picking numbers and operations,
+until you have reached an equation that you think will get you as close to the target as possible.
+Click the equals sign to lock in your answer, and evaluate the answer.
+
+The Letters Game, will prompt for how many vowels you want to use, and the remaining letters will be provided.
+Make the longest word you can using the 9 letters and input it into the box above,
+before the timer runs out
+or when you have reached the longest word you can, submit the word.

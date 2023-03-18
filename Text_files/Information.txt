@@ -1,0 +1,11 @@
+Countdown is a popular television show game which has been aired since 1982.
+The game has three sections: Letters, Numbers and Conundrum.
+
+The letters version provides 9 letters of which the player can choose either 3,4 or 5 vowels
+and the remaining letters to be consonants.
+From these 9 characters, the aim is to make the longest word possible within the time frame.
+
+The numbers version is similar, the user is prompted to pick the amount of 'big numbers',
+with a maximum of 4 and the remaining numbers are 'small numbers'.
+Provided with these numbers, a target number is provided and the user's aim is to reach this
+target number or as close to as possible within the time frame.
