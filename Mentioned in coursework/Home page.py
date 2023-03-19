@@ -122,13 +122,13 @@ class App(ctk.CTk):
         print(Username.get_input(), Password.get_input())
 
         global file
-        file = open('accounts.csv', 'r')
+        file = open('../Unused files/accounts.csv', 'r')
         for line in file:
             item = line.split(',')
             if Username == item[0] and Password == item[1]:
                 print('Logged in successfully!')
             else:
-                file = open('accounts.csv', 'a')
+                file = open('../Unused files/accounts.csv', 'a')
                 info = '\n' + Username + ',' + Password
                 file.write(info)
                 print('You have been signed up as a log in could not be found')
