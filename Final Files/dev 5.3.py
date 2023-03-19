@@ -1,11 +1,10 @@
 # imports
-# todo get timer to work, maybe take it out into a different file but just make sure a timer exists full stop.
 import datetime  # Used in the timer
 import functools  # Used in buttons that have more than one command
-import random  #
-from random import randint
+import random  # Used for picking random choices
+from random import randint # Used when generating target numbers
 import tkinter
-from tkinter import StringVar, messagebox, IntVar
+from tkinter import StringVar, IntVar, messagebox
 import customtkinter as ctk
 
 
@@ -122,6 +121,7 @@ class Tabview(ctk.CTkFrame):
 class NumbersGame(ctk.CTkToplevel):
     def __init__(self):
         super().__init__()
+        self.difference = None
         self.score = IntVar()
         # Input dialog to take the  user's choice for how many big numbers.
         number_of_big = ctk.CTkInputDialog(text="How many big numbers? [1,2,3,4]", title='Big Numbers')
@@ -287,39 +287,36 @@ class NumbersGame(ctk.CTkToplevel):
                 self.user_total = str(eval(self.expression))
                 self.equation.set(self.user_total)
                 print(f"Your answer evaluated to {self.user_total}")
-                expression = ""  # initialize the expression variable
+                calculate_score()
             # if error is generated then handle by the except block
             except:
                 self.equation.set(" error ")
 
-            difference = abs(self.target - float(self.user_total))
-            if difference == 0:
+        # Function to calculate score based off target and user's expression.
+        def calculate_score():
+            self.difference = abs(self.target - float(self.user_total))
+            if self.difference == 0:
                 self.score.set(self.score.get() + 10)
                 score_label.configure(text=f'Score: {self.score.get()}')
                 print(f"Number evaluated equalled the target, so you scored {self.score.get()} points")
-            elif 0 < difference < 6:
+            elif 0 < self.difference < 6:
                 self.score.set(self.score.get() + 7)
                 score_label.configure(text=f'Score: {self.score.get()}')
-                print(f"Number evaluated is {difference} from the target, so you scored {self.score.get()} points")
-            elif 6 <= difference <= 10:
+                print(f"Number evaluated is {self.difference} from the target, so you scored {self.score.get()} points")
+            elif 6 <= self.difference <= 10:
                 self.score.set(self.score.get() + 5)
                 score_label.configure(text=f'Score: {self.score.get()}')
-                print(f"Number evaluated is {difference} from the target, so you scored {self.score.get()} points")
+                print(f"Number evaluated is {self.difference} from the target, so you scored {self.score.get()} points")
             else:
-                print("Number evaluated is too far from target to score any points")
-
+                print(f"Number evaluated is {self.difference} from the target, so you scored {self.score.get()} points")
 
         def operand_press_switch(op):
             press(op)
             switch()
 
-        # def remember():
-        #     if not button1.winfo_viewable():
-        #         button1.grid()
-
         making()
         brn = -1  # base row number
-        bcn = 2
+        bcn = 2  # base column number
 
         target_label = ctk.CTkButton(self, text=f"Target is {self.target}", text_color="red")
         target_label.configure(state="disabled", fg_color='red', text_color_disabled='white')
@@ -373,7 +370,7 @@ class NumbersGame(ctk.CTkToplevel):
         multiply.configure(state="disabled")
         divide.configure(state="disabled")
 
-        equal = ctk.CTkButton(self, text=' = ', command=equalpress)
+        equal = ctk.CTkButton(self, text=' = ', command=functools.partial(equalpress))
         equal.grid(row=brn + 6, column=bcn + 2, padx=10, pady=10)
 
         Lbracket = ctk.CTkButton(self, text='(', command=lambda: press('('))
@@ -396,12 +393,6 @@ class NumbersGame(ctk.CTkToplevel):
         time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
         time_b.grid(row=brn + 2, column=bcn + 1)
 
-        # clear = ctk.CTkButton(self, text='Clear', command=clear)
-        # clear.grid(row=brn + 5, column='0', padx=10, pady=10)
-
-        # undo_button = ctk.CTkButton(self, text='Undo', font=('arial', 20, 'bold'))
-        # undo_button.configure(command=remember())
-        # undo_button.grid(row=brn + 6, column=bcn + 0)
 
         self.t_seconds = time
 
@@ -410,7 +401,9 @@ class NumbersGame(ctk.CTkToplevel):
             timer_string_var.set(timer)
             self.t_seconds -= 1
             if self.t_seconds == 0:
-                messagebox.showinfo("Time Countdown", "Time's up ")
+                messagebox.showinfo("Time Countdown", """Time's up!
+                You can continue playing this round, but for practise sake, you may continue.
+                 """)
                 ctk.CTkToplevel.configure(self, state="disabled")
             self.update()
             self.after(1000, update_gui2)
@@ -501,7 +494,11 @@ class LettersGame(ctk.CTkToplevel):
         def submitpress():
             self.user_word = entry.get()
             self.user_word = self.user_word.lower()
-
+            if buttonc["state"] == "normal":
+                buttonc.configure(state="disabled")
+                submit.configure(state="disabled")
+            calculate_score()
+        def calculate_score():
             if self.user_word in self.all_possible:
                 if len(self.user_word) == 9:
                     self.score.set(
@@ -513,9 +510,7 @@ class LettersGame(ctk.CTkToplevel):
                 print(
                     f"As your word {self.user_word} has a length of {len(self.user_word)} you score {self.score.get()} points")
 
-            if buttonc["state"] == "normal":
-                buttonc.configure(state="disabled")
-                submit.configure(state="disabled")
+
 
         def display_best_words():
             best_words_text = ctk.CTkTextbox(self, height=40)
