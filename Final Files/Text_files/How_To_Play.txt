@@ -1,13 +1,17 @@
 First begin by choosing the preferred option between the Letters Game and the Numbers Game.
 
 The Numbers Game, will prompt for how many big numbers you want to use then wait.
+You will then be promoted for the time you would like the round to last for.
+As this software is used for training when the timer runs out you will still be able to submit an answer,
+but a messagebox informing you that you ran out of time will appear.
 Click the first number you want to use, afterwards this number will be deleted,
 signifying that you cannot use it again.
 Then choose an operation to use and repeat picking numbers and operations,
 until you have reached an equation that you think will get you as close to the target as possible.
 Click the equals sign to lock in your answer, and evaluate the answer.
+Depending on the difference your input is and from the target a corresponding point score will be output.
 
 The Letters Game, will prompt for how many vowels you want to use, and the remaining letters will be provided.
-Make the longest word you can using the 9 letters and input it into the box above,
-before the timer runs out
-or when you have reached the longest word you can, submit the word.
+Make the longest word you can with the 9 letters and input it into the box above before the timer runs out.
+Once you have reached the longest word you can think of, click the submit button.
+If your word is valid, you will be rewarded with points based off the length of your word.
