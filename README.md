@@ -1,2 +1,2 @@
 # New_countdown
-Countdown but done in python and easier.
+To run the final product, load the dev 5.3 in the final files folder.
