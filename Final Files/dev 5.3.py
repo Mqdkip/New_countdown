@@ -602,6 +602,8 @@ class LettersGame(ctk.CTkToplevel):
 
         update_gui()
 
+        print(self.letters)
+
 
 if __name__ == "__main__":
     page = HomePage()
