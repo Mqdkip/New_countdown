@@ -193,10 +193,12 @@ class NumbersGame(ctk.CTkToplevel):
                     self.final.append(s)
 
             # if there are final solutions, choose the one with the shortest length as the best solution
-            if self.final:
+            if  self.final:
                 self.best_solution = min(self.final, key=len)
                 # convert the best solution from a list of strings to a single string separated by newlines
                 self.best_solution = '\n'.join(self.best_solution)
+            else:
+                pass
 
             # print the total number of solutions
             print(f"There are a total of {len(self.final)} solutions.")
@@ -247,7 +249,7 @@ class NumbersGame(ctk.CTkToplevel):
                 solve(target, lst, newpath, solutions)
 
         def display_best_solution():
-            best_solution_text = ctk.CTkTextbox(self, height=40, width=150)
+            best_solution_text = ctk.CTkTextbox(self, height=100, width=150)
             best_solution_text.grid(row=brn + 7, column=3, padx=20, pady=(20, 10))
             best_solution_text.insert('0.0', f'{self.best_solution}')
             best_solution_text.configure(state="disabled")
@@ -256,6 +258,14 @@ class NumbersGame(ctk.CTkToplevel):
             for s in self.final:  # print them out
                 print(s)
             print(f"There are a total of {len(self.final)} solutions.")
+
+        def clear():
+            self.equation.set("")
+            self.expression = ""
+            ctk.set_widget_scaling(1)
+            if buttonc["state"] == "disabled":
+                switch()
+
 
         def switch():
             # creates two lists, each list containing each type of button
@@ -373,8 +383,13 @@ class NumbersGame(ctk.CTkToplevel):
         equal = ctk.CTkButton(self, text=' = ', command=functools.partial(equalpress))
         equal.grid(row=brn + 6, column=bcn + 2, padx=10, pady=10)
 
+
+        clear = ctk.CTkButton(self, text='Clear', command=clear)
+        clear.grid(row=brn + 5, column=bcn + 0)
+
         Lbracket = ctk.CTkButton(self, text='(', command=lambda: press('('))
         Lbracket.grid(row=brn + 5, column=bcn + 1)
+
 
         Rbracket = ctk.CTkButton(self, text=')', command=lambda: press(')'))
         Rbracket.grid(row=brn + 5, column=bcn + 2)
@@ -585,6 +600,8 @@ class LettersGame(ctk.CTkToplevel):
         time_b = ctk.CTkButton(self, textvariable=timer_string_var)
         time_b.configure(state="disabled", fg_color='red', text_color_disabled='white')
         time_b.grid(row=0, column=4)
+
+
 
         self.t_seconds = time
 
