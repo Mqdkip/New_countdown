@@ -472,7 +472,7 @@ class LettersGame(ctk.CTkToplevel):
             self.letters = [ops.lower() for ops in [*vow, *cons]]
 
             # Next, let's define a list of words that we want to check
-            with open('/usr/share/dict/words', 'r') as f:
+            with open("Text_files/words.txt", 'r') as f:
                 words = f.read().split()
                 self.filtered_words = [item for item in words if not item[0].isupper()]
                 # Removes pronouns from the list of possible words increasing efficiency.
